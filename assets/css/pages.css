@@ -116,6 +116,13 @@ h2 {
   height: auto;
   border: 0;
 }
+/* linked pictures fade on hover, 0.2s in and out (to 50%, or the generated dim-* value) */
+.dim {
+  transition: opacity 0.2s;
+}
+.dim:hover {
+  opacity: var(--dim, 0.5);
+}
 .grid .cover {
   object-fit: cover;
 }
@@ -260,6 +267,7 @@ h2 {
 .brightness-120pct { --brightness: 120%; }
 .brightness-105pct { --brightness: 105%; }
 .c-0b0308 { color: #0b0308; }
+.dim-0_3 { --dim: 0.3; }
 .fs-36 { font-size: 36px; }
 .fs-31 { font-size: 31px; }
 .fs-18 { font-size: 18px; }
