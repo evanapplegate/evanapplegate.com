@@ -116,12 +116,12 @@ h2 {
   height: auto;
   border: 0;
 }
-/* linked pictures fade on hover, 0.2s in and out (to 50%, or the generated dim-* value) */
+/* linked pictures fade on hover, 0.2s in and out: half as far as Dorik's fade (to 75%; a dim-0_3 picture to 65%) */
 .dim {
   transition: opacity 0.2s;
 }
 .dim:hover {
-  opacity: var(--dim, 0.5);
+  opacity: calc((1 + var(--dim, 0.5)) / 2);
 }
 .grid .cover {
   object-fit: cover;
