@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evans Blog</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Shared theme (background, font, link color) for the whole site -->
+    <link rel="stylesheet" href="/assets/css/site.css">
+    <link rel="icon" href="site_images/favicon.ico" type="image/x-icon">
+    <!-- Include marked.js for Markdown parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <h2><a href="/">Evan Applegate</a></h2>
+            <nav>
+                <ul id="post-list"></ul>
+            </nav>
+        </aside>
+        <main class="content">
+            <div id="post-content"></div>
+            <div class="post-navigation">
+                <a href="#" id="prev-post" class="nav-button">← Previous Post</a>
+                <a href="#" id="next-post" class="nav-button">Next Post →</a>
+            </div>
+        </main>
+    </div>
+    <script src="blog.js"></script>
+</body>
+</html>

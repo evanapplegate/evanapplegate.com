@@ -1,0 +1,2 @@
+Place your background.gif and favicon.ico files in this directory.
+The CSS is already configured to use them.

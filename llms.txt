@@ -1,0 +1,43 @@
+# Evan Applegate
+
+> Evan Applegate is an award-winning cartographer and information designer. His maps appear in National Geographic and Manhattan offices; he makes LED-backlit map art (Radiant Maps), maps for organizations (The Map Consultancy), map blankets and prints (Quercus Maps), and a podcast interviewing cartographers (Very Expensive Maps).
+
+Links: https://www.linkedin.com/in/evan-applegate/, https://github.com/evanapplegate
+
+## Pages
+
+- [Evan Applegate](https://evanapplegate.com/): Evan Applegate is an award-winning cartographer and information designer: maps for National Geographic and Manhattan offices, backlit map art, map blankets and a podcast interviewing cartographers.
+- [Map design files](https://evanapplegate.com/map-design-files/): Source files for select maps by cartographer Evan Applegate, mostly public domain.
+- [2025 Map Gift Guide](https://evanapplegate.com/map-gifts/): Only the best mapstuff from independent cartographers, globemakers and artists: an incomplete list by cartographer Evan Applegate, no affiliate links.
+- [Evan Applegate's blog](https://evanapplegate.com/evans_blog/): Essays on cartography, machine learning, nursing, eldercare and more.
+
+## Blog posts
+
+Each post is Markdown; the links go to the raw files.
+
+- [ML has killed “looks okay from arm’s length” cartography](https://evanapplegate.com/evans_blog/posts/ML_killed_carto.md)
+- [When Danielle Baskin took a romanesco broccoli to the 3D printing conf...](https://evanapplegate.com/evans_blog/posts/baskin.md)
+- [The soft end of something sharp](https://evanapplegate.com/evans_blog/posts/bedside_nursing.md)
+- [The Best Maps Lie Ahead](https://evanapplegate.com/evans_blog/posts/best_maps_lie_ahead.md)
+- [Computer-mediated cartographer bestiary](https://evanapplegate.com/evans_blog/posts/bestiary_part_1.md)
+- [Get me some computer rurality](https://evanapplegate.com/evans_blog/posts/computer_rurality.md)
+- [“COVID response” was the nuttiest event of my lifetime and I’m going to die mad about it](https://evanapplegate.com/evans_blog/posts/covid.md)
+- [My least favorite ten thousand words](https://evanapplegate.com/evans_blog/posts/evans_thesis_notes.md)
+- [Have you heard about our painfully loud speaker as a service?](https://evanapplegate.com/evans_blog/posts/genasys.md)
+- [Cartographic graduate education at the University of Wisconsin–Madison, 2014–2017](https://evanapplegate.com/evans_blog/posts/grad_school.md)
+- [365 days of great ideas for your map business](https://evanapplegate.com/evans_blog/posts/great_map_ideas.md)
+- [What I’ve learned during 14 years of mapmaking](https://evanapplegate.com/evans_blog/posts/map_tips.md)
+- [The mapmaker’s terrible hand](https://evanapplegate.com/evans_blog/posts/mapmakers_terrible_hand.md)
+- [More men eases eldercare](https://evanapplegate.com/evans_blog/posts/men_eldercare.md)
+- [2060: 62 million old, lonely, broke millennials](https://evanapplegate.com/evans_blog/posts/millenials_old.md)
+- [Podcasting tips](https://evanapplegate.com/evans_blog/posts/podcast_tips.md)
+- [Making a public lands explorer map](https://evanapplegate.com/evans_blog/posts/public_lands_map.md)
+- [Shoutout machine learning](https://evanapplegate.com/evans_blog/posts/shoutout_ML.md)
+- [Low-pressure sodium lamp salvage](https://evanapplegate.com/evans_blog/posts/sodium.md)
+- [The American Hospital: Trying to Heal in Someone’s Workplace](https://evanapplegate.com/evans_blog/posts/trying_to_heal_in_a_workplace.md)
+
+## Related
+
+- [Radiant Maps](https://radiantmaps.co/): ultra-detailed LED-backlit illuminated maps
+- [The Map Consultancy](https://themapconsultancy.com/): maps and GIS for organizations
+- [Very Expensive Maps](https://veryexpensivemaps.com/): podcast interviewing cartographers

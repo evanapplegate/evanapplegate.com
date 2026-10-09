@@ -1,0 +1,973 @@
+<h3>My least favorite ten thousand words</h3>
+
+<p>To finish a cartography & GIS masters degree I had to make a map that required<br>1) "basic command line" levels of computer literacy<br>and<br>2) guess at the physical
+phenomena that a grid of numbers expressing some radiometric quantity
+concerning earth's surface or atmosphere purported to relate to<br><br>I
+failed, I spent like ~200 hours of work across months, emailing searching
+wandering around the space sciences engineering center laptop in hand. Had to
+abandon original topic re: "relationship between earth's surface brightness
+and earth's atmospheric-terrestrial energy balance," which was good,
+because I knew nothing and couldn't even make an educated guess. Gross
+scales, coarse materials, a ~3600x7200 grid of numbers was supposed to tell
+me about THE WHOLE PLANET EARTH'S exchange of photons? C'mon<br><br>My
+notes file below, may you understand something called "White Sky Albedo"
+better than I did </p>
+<hr>
+
+<p>lmao i can’t even remember what I’m supposed to do! this shit hieroglyphics!</p>
+<p><strong>Environmental Research Letters -</strong> check their formats, you’ll cut it down, put the rest in SI.</p>
+<p><strong>Latest questions</strong></p>
+<ul>
+<li>why don’t I just use class 13 from the albedo LUM and skip the euclidian allocation/nearest neighbor part?<ul>
+<li>“Since the LUMs include albedo and BRDF statistics for each IGBP class for all possible locations, they can be used to generate albedo maps for projected land cover”</li>
+</ul>
+</li>
+</ul>
+<p><strong>mutlu meeting 3/29</strong></p>
+<ul>
+<li>forcing calc is in realm of possibility, so you’re okay on that</li>
+<li>recommends keeping track of LC through the whole process, but can just do it post-facto; after you get your final RF map for the 3 classes, overlay with original LC map and just see what coincides. you’ll have to do it once per month and then the +/- std dev but that’s still easier than keeping track of each class I think? I have 17 classes x 3 OG rasters x 12 months x 12 1 sigma x 12 1-sigma. but wait will I have to do that anyway post-facto?<ul>
+<li>you want to be able to say “for the 25%+ class, tk converted from boreal forest, tk from desert, etc.) you dont need the std dev since all we care about is the previous LC, right?</li>
+</ul>
+</li>
+<li>use these probability classes<ol>
+<li>25%+ - least conservative</li>
+<li>50%+ - medium conservative</li>
+<li>75%+ - most conservative</li>
+</ol>
+</li>
+<li>ghimire, soden papers can help with the vocabulary for your intro and lit review.</li>
+</ul>
+<p><strong>outstanding questions</strong></p>
+<ul>
+<li>The forcing calc<ul>
+<li>Ghimire’s was forcing per unit area = (Δmonthly WSA x shell’s WSA kernel) + (Δmonthly BSA x shell’s BSA kernel)</li>
+<li>Mine is: forcing per unit area = (((Δ WSA x fraction WSA) x WSA kernel ) + ((Δ BSA x fraction BSA) x BSA kernel)))<ul>
+<li>we use the fractions because we dont know the contributions. because kernels have both BSA and WSA, we separate their contributions.</li>
+</ul>
+</li>
+<li>what does my final number even mean? Summing all the cells for the segment “cells that are 100% likely to become urban in the future), I got WSA term = 6.4 and BSA term = 12.6. Divided by the number of cells (24,588) yields 0.000774 average per cell. so this makes sense, can only go up.</li>
+<li>Do I need to keep track of albedo change by original LC class?<ul>
+<li>document how it’s geographically varying; how it matters from LC &gt; to current urban</li>
+<li>do a flowchart</li>
+<li>find two contrasting cases; boreal forest converting to urban vs. desert converting to urban.</li>
+<li>proximity is king here; they bloom out from current cities</li>
+</ul>
+</li>
+<li>change to <strong>3 classes,</strong> each probability class has RF, + std dev, - std dev. whiskers and error bars at the end.<ul>
+<li>25+; separate into discrete LC rasters?<ul>
+<li>land cover class 1</li>
+<li>land cover class 2</li>
+<li>land cover class 3</li>
+</ul>
+</li>
+<li>50+</li>
+<li>75+</li>
+</ul>
+</li>
+<li><strong>do LC change post-facto! as long as you keep the 3 classes, then</strong></li>
+<li>why more BSA? kernels isolate land surface component only, so less atmo effects overall, and less WSA effects.<ul>
+<li>read more ghimire and shell to see why that is, goes in the explanatory.</li>
+</ul>
+</li>
+<li>just keep track of what you did to each file.</li>
+<li>bring the maps, then we’ll pick out what we want to present.</li>
+</ul>
+</li>
+</ul>
+<p><strong>Pure data tasks</strong></p>
+<ul>
+<li>get albedo rasters into something easily readable: converted to tiff, stripped out water since I don’t care, bands = IGBP classes now. <strong>CHECK</strong><ul>
+<li>Lower file size using extract by mask? nah I need the extents to match all the way around, the damn euclidian allocations won’t stand for that. but heyyy I can clip everything by the same shapefile right, then set extents to match the kernels? gonna try that, it’ll make this way faster.</li>
+<li>when you get an actual good file, can use this to clip by shapefile: gdalwarp -of GTiff -dstnodata 0 -ot Int16 -te -180 -90 180 90 -cutline arc_dissolved.shp -cl arc_dissolved -crop_to_cutline BSA_Aug_mean.tif albedo_cropped3.tiff --config GDAL_CACHEMAX 2048 -multi<ul>
+<li><em>well that works but it’s incredibly slow AND it only cuts down filesize from 800mb to 500mb. Not worth the time or extent fuckery. nixed!</em></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>New categories <strong>CHECK</strong><ul>
+<li>25%+ - value is 25</li>
+<li>50%+ - value is 50</li>
+<li>75%+ - value is 75</li>
+<li>extant - value is 101<ul>
+<li>this did it: gdal_calc.py --calc &quot;A*(A==101)&quot; --format GTiff --type UInt16 --NoDataValue 0 -A input.tif --A_band 1 --outfile output.tif</li>
+<li>and to get the extents right: gdalwarp -ot Int16 -te -180 -90 180 90 75_and_up.tif 75_and_up2.tif</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>extant class 13 albedo; hey assign_albedos.py works, if you can get it to read what you like you can get this done lickety split<ul>
+<li>I mean i could do this pretty easily with batch scripting or gdal_calc as a subprocess, but it keeps throwing an error about &quot;ERROR 1: TIFFOpen:: No such file or directory”. with a final &quot;AttributeError: &#39;NoneType&#39; object has no attribute ‘SetGeoTransform’.” so I dunno? If this worked it would be great!<ul>
+<li>sys.executable will always point to canopy, no matter terminal or canopy. so that may explain it? god canopy fucked my life up.</li>
+<li><em>this is taking guneralps current cities and assigning class 13 albedos from each of the following files. just a loop with band math, man.</em></li>
+</ul>
+</li>
+<li>extant city with WSA, 12 months</li>
+<li>extant city with WSA, 12 months + 1std dev</li>
+<li>extant city with WSA, 12 months - 1std dev</li>
+<li>extant city with BSA, 12 months</li>
+<li>extant city with BSA, 12 months + 1std dev</li>
+<li>extant city with BSA, 12 months - 1std dev</li>
+</ul>
+</li>
+<li>euclidian allocation maps, arc cant read or write multiband tiffs for this function so going to get all these.<ul>
+<li>[ ]  <ul>
+<li><em>this is taking what you just did up there, and using euclidian alloc to amoeba those values out. can batch it or use arcpy, probably going to batch it.</em></li>
+</ul>
+</li>
+<li>extant city with WSA, 12 months</li>
+<li>extant city with WSA, 12 months + 1std dev</li>
+<li>extant city with WSA, 12 months - 1std dev</li>
+<li>extant city with BSA, 12 months</li>
+<li>extant city with BSA, 12 months + 1std dev</li>
+<li>extant city with BSA, 12 months - 1std dev</li>
+</ul>
+</li>
+<li>Assign %-chance pixels to extant&#39;s albedos<ul>
+<li>Schneider’s 2001 data has all the LC classes! Seto’s data is in goode homolosine, schneiders provided in the same; maybe if I resample in the exact same way while NOT changing projection, I can see if schneider’s urban class is co-incident with seto’s if so, then the rest should match up. they both used goode homolosine! .msked.bip is the one you want</li>
+<li>setting both layer CRS to the custom proj &quot;+proj=igh +a=6371007.181 +b=6371007.181 +units=m +no_defs” gets them nicely co-incident. resampling with gdal_warp and tr -5000, default nearest neighbor, gets VERY close to their data! going to try it again with Arc.<ul>
+<li>Arc time: arc is a fucking moron, the .hdr cant have .bip on the end too. so match filenames exactly and it&#39;ll read the dataset. 10.1&#39;s authalic sphere rounds the axes measurements to 6371007.181?</li>
+<li>seto comes in as &quot;GCS_MODIS_sphere,&quot; which must be why I had to fix it up in QGIS. defined schneider&#39;s projection in arc to match seto&#39;s, which had a decimal sphere called &quot;GCS_MODIS_Sphere&quot; that arc had never heard of.</li>
+<li>resample without class 13 extraction first, match cell size to seto, use as snap raster: <strong>perfect</strong> **match on extant urban pixels, even the little scattered fucks. Yes!! can just fill in the isolated inland zero/waters and we&#39;ll be good?<ul>
+<li>better to throw out any seto pixels that coincide with old-LC water, or fill in the waters on my old-LC layer with nearest neighbor? I assume seto had a water mask, but probably one that threw out single water pixels? or wasn&#39;t accounted for? either:<ul>
+<li>don&#39;t use any pixels that overlap water in the calc</li>
+<li>find which seto pixels overlap water, extract them, use them as nibble mask? I&#39;d tally up the # of seto-overlaps-water pixels just to see how many there are.<ul>
+<li>result: threw out 340 pixels out of an original total of 251,479, 0.001%, so i aint worried</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>schneider nodatas: 253, 254, 255. water is 0, 17.</li>
+</ul>
+</li>
+<li>reprojected both to WGS84, using native goofy decimal degree resolution and just typing in 0.05deg. all still overlapped nicely.</li>
+</ul>
+</li>
+<li><a href="http://chris35wills.github.io/python-gdal-raster-io/">http://chris35wills.github.io/python-gdal-raster-io/</a> and <a href="http://geoinformaticstutorial.blogspot.co.uk/2012/09/reading-raster-data-with-python-and-gdal.html">http://geoinformaticstutorial.blogspot.co.uk/2012/09/reading-raster-data-with-python-and-gdal.html</a> for ENVI and python?</li>
+<li>split ALL non-extant pixels in seto file (1-100% chance) into land cover? but they cant encode more than one number? use arithmetic?<ul>
+<li>1-25 - 100</li>
+<li>26-50 - 200</li>
+<li>then add to LC raster one at a time</li>
+<li>then get python to say<ul>
+<li>see value 109?</li>
+<li>fetch albedo value from an albedo file, picking the right band</li>
+<li>replace that value/write to a new file?</li>
+<li>LORDY this will suck, like 300 gigs of files at the end!</li>
+<li>waitaminit: store as multiband tiffs! mean, + std dev, - std dev = 3 bands. one for each month.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>I have 3 rasters. The following has to be repeated for each:<ul>
+<li>Assign a value to each of them using raster calc; they overlay with a land cover map, so assign the class of whatever they overlay to each pixel.</li>
+<li>Assign albedo value by reading from another file, which has one band per land cover class.<ul>
+<li>Say a pixel from the first step is now land cover class 5; the script looks in an albedo file, opens band 5, then replaces the pixel’s current value with whatever it overlays in the albedo file.</li>
+<li>Repeat this 12x for 12 months of data, then +1 std deviation, then -1 std deviation.<ul>
+<li>There are 12 months of albedo data, so this happens over the 12 albedo rasters.</li>
+<li>Then <strong>+1</strong> standard deviation value, which is collected from another raster with the same setup as the albedo raster (i.e. script would open this raster, find the value in band 5, add this value to the current raster, then save as a new value in a new band) Repeat 12 times, once for each month.</li>
+<li>Then <strong>1</strong> standard deviation, same process as above, once per month for a total of 12.</li>
+<li>So (12 months of data) + (12 months of +1 std dev data) + (12 months of -1 std dev data) = 36 outputs written across 12 3-band rasters.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Assign a new albedo value by reading from another file.<ul>
+<li>If a pixel is land cover class 5, or 7, or 1, or whatever, it doesn’t matter this time; the script looks in a different albedo file then replaces the pixel’s current value with whatever it overlays and writes a new raster.</li>
+<li>Repeat this 12x for 12 months of data, then +1 std deviation, then -1 std deviation.<ul>
+<li>There are 12 months of albedo data, so this happens over the 12 albedo separate rasters.</li>
+<li>Then <strong>+1</strong> standard deviation, which is collected from another raster with the same setup as the albedo raster (i.e. script would open this raster, find the pixel in band 13, replace the value of the current pixel, then save as a new raster.) Repeat 12 times, once for each month.</li>
+<li>Then <strong>1</strong> standard deviation, same process as above, once per month for a total of 12.</li>
+<li>So (12 months of data) + (12 months of +1 std dev data) + (12 months of -1 std dev data) = 36 outputs written across 12 3-band rasters</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Generate a new set of rasters, a simple subtraction: the difference the between the old-land-cover albedo value and the new-land-cover albedo value.<ul>
+<li>Same thing as above: (12 months of data) + (12 months of +1 std dev data) + (12 months of -1 std dev data) = 36 outputs across 12 3-band rasters
+:moneybag: Looking for someone located anywhere + good at geo-python raster stuff to help me automate a raster processing task with GDAL and python. Basically band math over a few dozen files, likely a day or two&#39;s work for someone competent, but I only have like a week to do it and I stink at python. Offering $750 to help me put together some scripts and parse the results into something I can play with, message me for deets or evandapplegate@gmail.com, please pass along to anyone who might be interested. :moneybag:</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>could this be done with vector? Then I’d only have to generate one file per each of the probability classes, but then how to move albedo values in the raster &gt; values in their own column in the points? and then how to do changes/subtraction?</li>
+</ul>
+<p>What are you looking to end up with?</p>
+<ul>
+<li>Euclidian allocation - 12 files, probably composed from individuals since I don’t think arcgis lets you write to multi-band tiffs. or do it with composite bands...<ul>
+<li>January<ul>
+<li>mean albedo in band 1</li>
+<li>+1 std dev in band 2</li>
+<li>1 std dev in band 3</li>
+</ul>
+</li>
+<li>Feb</li>
+<li>Mar</li>
+<li>Apri</li>
+<li>May</li>
+<li>June</li>
+<li>July</li>
+<li>Aug</li>
+<li>Sep</li>
+<li>Oct</li>
+<li>Nov</li>
+<li>Dec</li>
+</ul>
+</li>
+<li>Old-LC files: 3 probabilities x 15 land cover classes x 12 months x 3 values (mean, +1 sigma, -1 sigma) x .103gb per raster = 167 gigs<ul>
+<li>25%+<ul>
+<li>land cover class 1<ul>
+<li>January<ul>
+<li>mean albedo in band 1</li>
+<li>+1 std dev in band 2</li>
+<li>1 std dev in band 3</li>
+</ul>
+</li>
+<li>Feb</li>
+<li>Mar</li>
+<li>Apri</li>
+<li>May</li>
+<li>June</li>
+<li>July</li>
+<li>Aug</li>
+<li>Sep</li>
+<li>Oct</li>
+<li>Nov</li>
+<li>Dec</li>
+</ul>
+</li>
+<li>Class 2</li>
+<li>Class 3</li>
+<li>Class 4</li>
+<li>Class 5</li>
+<li>Class 6</li>
+<li>Class 7</li>
+<li>Class 8</li>
+<li>Class 9</li>
+<li>Class 10</li>
+<li>Class 11</li>
+<li>Class 12</li>
+<li>Class 14</li>
+<li>Class 15</li>
+<li>Class 16</li>
+</ul>
+</li>
+<li>50%+</li>
+<li>75%+</li>
+</ul>
+</li>
+<li>New-LC (now urban) files: 3 probabilities x 12 months x 3 values (mean, +1 sigma, -1 sigma) x .130gb = 14 gigs<ul>
+<li>25%+<ul>
+<li>January<ul>
+<li>mean albedo in band 1</li>
+<li>+1 std dev in band 2</li>
+<li>1 std dev in band 3</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>50%+</li>
+<li>75%+</li>
+</ul>
+</li>
+<li>Difference files: 3 probabilities x 12 months x 3 values (mean, +1 sigma, -1 sigma) x .130gb = 14 gigs<ul>
+<li>25%+<ul>
+<li>January<ul>
+<li>mean albedo in band 1</li>
+<li>+1 std dev in band 2</li>
+<li>1 std dev in band 3</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>50%+</li>
+<li>75%+</li>
+</ul>
+</li>
+</ul>
+<p>:moneybag: Looking for someone located anywhere + good at geo-python raster stuff to help me automate a raster processing task with GDAL and python. It&#39;s basically band math over a few dozen files, likely a day or two&#39;s work for someone competent, but I only have like a week to do it and I stink at python. Offering $750 to help me put together a script and parse the results into something I can play with; message me for deets. :moneybag:</p>
+<p><strong>python fuckery</strong></p>
+<ul>
+<li>/Library/Frameworks/GDAL.framework/Versions shows I have 1.11, running the gdalinfo in the “program” folder there says i have 1.11.4 AND it supports HDF4.<ul>
+<li>man it really hates quotes in your paths, if you try to call this to/from any paths with quotes it wont work. anyway this works: /Library/Frameworks/GDAL.framework/Versions/1.11/Programs/gdal_translate -of GTiff HDF4_EOS:EOS_GRID:&quot;MCD12Q1.A2001001.h21v06.051.2014287163907.hdf&quot;:MOD12Q1:&quot;Land_Cover_Type_1&quot; test.tiff<ul>
+<li>to run a bash script from the terminal: sh your_script.sh</li>
+<li>okay we’re going to test resample with MCD12Q1.A2001001.h20v06.051.2014287163707, which is over egypt. seeing if resampling to 0.05 deg matches up with their shit, then I can mosaic the rest.<ul>
+<li>testing in arc: loads nice in arcgis, which is a change. anyway reprojecting the 3707 tile to seto&#39;s GCS and resampling, no go. ditto with taking the projected file and running nearest neighbor and majority resample from the toolbox.</li>
+<li>they said in the SI they extracted the urban pixels then resampled: extracted class 13 from the reprojected file &gt; then resample, no joy on any resample method. its closer though! typing in 5000 no diff than using seto as cell size, makes sense.<ul>
+<li>how about extracting, resampling, then reprojecting? slightly diff results from using seto as snap raster, but they wouldnt have done that since they, you know, did this first. so proceeding using unsnapped. okay so far the closest is extracted first, then reprojected, then nearest neighbor, using seto as snap raster.</li>
+<li>majority is way too generous, cubic and bilinear identical. im stumped, can&#39;t get the extant city pixels to match up.</li>
+<li>maybe its because they said &quot;circa 2000,&quot; and im using 2001? this data got a revise in 2016, waybackmachine says the 005 was last there in 2012. MCD12Q1.005 is what I need to replicate this and I have MCD12Q1.051. Asked USGS, maybe I can get it from someone else?</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>they come out with &quot;+proj=sinu +lon_0=0 +x_0=0 +y_0=0 +a=6371007.181 +b=6371007.181 +units=m +no_defs”</li>
+</ul>
+</li>
+<li>/Users/traveler/Library/Enthought/Canopy_64bit/User/bin has a gdalinfo in there, that says i have 2.0.1. Anything I do in the terminal or in canopy will use 2.0.1, which can’t access HDF. So I gotta find a way to access 1.11? downgrade? gonna try</li>
+<li><a href="http://gis.stackexchange.com/questions/140398/mosaicking-and-projecting-modis-land-cover-data-mcd12q1">http://gis.stackexchange.com/questions/140398/mosaicking-and-projecting-modis-land-cover-data-mcd12q1</a></li>
+</ul>
+<p><strong>Questions for Jeff</strong></p>
+<p>A = urban pixels</p>
+<p>B = “future” urban pixels</p>
+<p>C = albedo</p>
+<p>D = standard deviation of albedos in C</p>
+<ul>
+<li>this is band math; just adding and subtracting. reclassify.</li>
+<li>same as in 579 lab, basically; to uptake albedo values, reclassify to 0, then add what’s underneath on the albedo values to.</li>
+<li>try this in Arc modelbuilder, grab the python script, then make a loop to just do it with your multiple inputs. out. jeff says build your workflow in modelbuilder and literally just loop over your stuff.</li>
+</ul>
+<p>you use GDAL on HDF4? NOPE</p>
+<p>Good packages? ever use rasterio? NOPE</p>
+<p><strong>General software tips</strong></p>
+<ul>
+<li>Ugh arc exports all in ADF if you don&#39;t tell it TIFF. or you can make 20MB tiffs to make this easier.</li>
+<li>QGIS Raster &gt; landscape ecology &gt; statistics can tell you how much of each pixel, just put 1 for cell size</li>
+<li>gdal_calc: set nodata = 0 means “when you’re all done, and you see a 0, that’s nodata&quot;</li>
+<li>processing &gt; results viewer to show stuff that got ouput to html, as in raster statistics</li>
+<li>you can run gdal_XXX.py scripts you download from anywhere as long as you put python in front of them and the full path. you cant just put em with the rest of the gdal python scripts in library/frameworks etc because of permissions I guess. so stash them where you need them and call with python and the full path from terminal.<ul>
+<li>here’s the path: /Library/Frameworks/GDAL.framework/Versions/1.11/Programs/</li>
+</ul>
+</li>
+<li>r.report will give you a histo, if its not outputting raw text you have to make it save to a path that has no spaces.</li>
+<li>you’ll get incorrect min/max values no matter what you use to calc the stats (python gdal bindings, command line, GRASS, etc…) unless you run a gdal_translate with “-stats&quot; first; this creates a new tif with the stats re-calc’d and embedded in the file.<ul>
+<li>gdal_hist gives a dumbass output with cumulative values and everything’s rounded to hell, maybe multiplying all the values would help but python is just rounding shit to death</li>
+<li>r.report gives more precise output, but in awful formats. what’s with all the pipes???</li>
+</ul>
+</li>
+<li>settings &gt; custom CRS for new projeciton</li>
+<li>gdalwarp -tr 5000 5000 = target cell size 5000x5000 (meters)</li>
+<li>ogr2ogr is fucked because it doesnt have spatialite =/, cant use -dialect sqlite</li>
+<li>insanely stupid workflow for deleting those overlap-water pixels: extract all water pixels, find overlap with seto data, set all seto data to same value, convert seto data to vector, SAGA’s polygon dissolve, then clip raster by mask layer</li>
+<li>store everything on the external, but do the conversions on the native HDD. the write speed sucks ass. IO sucks too so you cant really stream stuff into QGIS.</li>
+<li>NameChanger for batch renaming</li>
+<li>remember in python to pick what band you want from the albedo files, you kept getting that array-dimension error because it read the whole 16 band file instead of just band 13 (urban)</li>
+<li>IGBP classes<ul>
+<li>1 Evergreen Needleleaf forest</li>
+<li>2 Evergreen Broadleaf forest</li>
+<li>3 Deciduous Needleleaf forest</li>
+<li>4 Deciduous Broadleaf forest</li>
+<li>5 Mixed forest 6 Closed shrublands</li>
+<li>7 Open shrublands 8 Woody savannas</li>
+<li>9 Savannas</li>
+<li>10 Grasslands</li>
+<li>11 Permanent wetlands</li>
+<li>12 Croplands</li>
+<li>13 Urban and built-up</li>
+<li>14 Cropland/Natural vegetation mosaic</li>
+<li>15 Snow and ice</li>
+<li>16 Barren or sparsely vegetated</li>
+</ul>
+</li>
+<li>I have to do the following 12 times, 1 for each month:<ol>
+<li>Reclassify urban raster into categories - might have to make these more unique if I’m going to assign by old albedo?<ol>
+<li>used SAGA “reclassify grid values&quot;</li>
+</ol>
+</li>
+<li>[ ]  <ul>
+<li>0 - no chance of becoming urban</li>
+<li>1 - 1 to 25% chance</li>
+<li>2 - 26 to 50% chance</li>
+<li>3 - 51 to 75% chance</li>
+<li>4 - 76-99% chance</li>
+<li>5 - 100% chance</li>
+<li>10 - extant cities as of 2000-2001</li>
+</ul>
+</li>
+<li>Let’s see what previous LC is like!<ul>
+<li>got different pixel values for each %-urban layer. every pixel in 1-25% is “1,” every pixel in 25-50% is “2,” etc. raster calc + the previous LC file, which is all IGBP categories = a whole bunch of new values in your raster.</li>
+<li>Take this new raster, run simple stats on it (like with the LC toolbox) and there you have it: how many pixels of each probability category have a chance to become urban.<ul>
+<li>an issue here: remember how this 0.05 deg LC file doesnt match up perfectly? well, the extant cities of course dont match up to class 13 in this LC file. so this is fucked without that real LC since I need class 13 of the previous LC file to align <em>exactly</em> with the extant cities in guneralp’s data. So, again, come back to this. This will only really work if I get guneralp’s data or take all those HDFs &gt; merge em all &gt; resample to 0.05 deg &gt; see if this resampling has the same extant-city LC as guneralp’s original shitty MODIS-sphere projection. if not, what the fuck!</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Overlay extant urban pixels, future urban pixels, and albedo data</li>
+<li>Urban probability pixels take on the values of what they overlap in the albedo file.<ul>
+<li>but this already sucks; gdal_calc in batch mode won’t work if the extents are different. r.mapcalculator doesnt work.<ul>
+<li>for some reason raster calculator in QGIS does it fine and doesn’t bitch about extents. but I can’t automate that. maybe it’s calling a different gdal???<ul>
+<li>use this? <a href="http://gdal-calculations.googlecode.com/svn-history/r55/trunk/lib/gdal_calculations/gdal_calculate.py">http://gdal-calculations.googlecode.com/svn-history/r55/trunk/lib/gdal_calculations/gdal_calculate.py</a></li>
+<li><a href="http://gis.stackexchange.com/questions/122581/using-qgsrastercalculator">http://gis.stackexchange.com/questions/122581/using-qgsrastercalculator</a> or call QGIS’s raster calc with python?</li>
+<li><strong>set an albedo layer’s pixels to 0 with the raster calc, then take your urban % layer + that new empty layer, there, you have a new layer with the perfect extent. THEN you can batch process gdal_calc either from QGIS or command line. the layer is called “just for setting extent”. Remember: the albedo files are monthly averages 2001-2010.</strong></li>
+<li>I think I need to mass-extract band 13 from the albedo files, otherwise this is going to take fucking forever and take all the room on my hard drive</li>
+<li><a href="http://gdal_calc.py/">gdal_calc.py</a><ul>
+<li>A urban_100_new_extent.tif --A_band 1 -B albedo_test.tif --B_band 13 --calc=&quot;(A+B)&quot; --outfile=out2.tiff --type=“UInt16&quot;</li>
+<li>^^^ this works, try to automate this somehow.</li>
+</ul>
+</li>
+<li>Calcs with UInt16 outputs, set nodata to 0. There are no 0 albedo spots on earth, man. check the histos. Then you can batch em again on standard devs, plus and minus. <strong>But I need to know the prior LC</strong> so I can assign the correct albedo; notice how the albedo files have different bands? these tests only used class 13. you gotta match those to each prior LC; so you have to find the prior LC for each of the % chance rasters, then conditionally re-assign their pixel values to the matching band in the albedo file.</li>
+<li>Going to skip most of this part and start testing my assignments of the extant albedos to my %-chance pixels.<ul>
+<li>extant + BSA <em>DONE</em> <strong>(A-10)+B</strong></li>
+<li>extant + WSA <em>DONE</em></li>
+<li>extant BSA + std dev</li>
+<li>extant WSA - std dev</li>
+<li>100% chance + BSA <em>JUST TESTING THIS FOR APRIL BSA + WSA, THIS NEEDS ACTUAL ALBEDO VALUES FROM THE LC - DONE</em>  <strong>(A-5)+B</strong></li>
+<li>100% chance + WSA <em>DONE</em></li>
+<li>100% chance BSA + std dev</li>
+<li>100% chance WSA - std dev</li>
+<li>75-99% chance + BSA <strong>(A-4)+B</strong></li>
+<li>75-99% chance + WSA</li>
+<li>75-99% chance BSA + std dev</li>
+<li>75-99% chance BSA - std dev</li>
+<li>50-75% chance + BSA <strong>(A-3)+B</strong></li>
+<li>50-75% chance + WSA</li>
+<li>50-75% chance BSA + std dev</li>
+<li>50-75% chance BSA - std dev</li>
+<li>25-50% chance + BSA</li>
+<li>25-50% chance + WSA</li>
+<li>25-50% chance BSA + std dev</li>
+<li>25-50% chance WSA - std dev</li>
+<li>1-25% chance + BSA</li>
+<li>1-25% chance + WSA</li>
+<li>1-25% chance BSA + std dev</li>
+<li>1-25% chance WSA - std dev</li>
+</ul>
+</li>
+<li>That sorts out the <em>before</em> albedo; so you can say “for pixels with a 50-75% chance of becoming urban by 2030, the aggregate albedo change as they became urban was TK.”</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>% chance pixels take on the value of the <em>nearest</em> <em>pixel</em> in the “extant albedo” layer (can I do IDW or something too? what’s good when you know nothing except spatial auto = weak as hell?)<ul>
+<li>well I’m coming up empty on doing this purely in raster, but it works if you convert everything to points first using &quot;grid values to points&quot; (SAGA tool in QGIS)<ul>
+<li>vector in QGIS: <a href="http://gis.stackexchange.com/questions/11377/how-to-join-attributes-from-nearest-point-in-qgis">http://gis.stackexchange.com/questions/11377/how-to-join-attributes-from-nearest-point-in-qgis</a> distance analysis with this method takes 10 mins just to calculate, then you have to join and change the ID values from strings to reals with the field calc, then back to raster? this sucks! it takes fucking forever!</li>
+</ul>
+</li>
+<li>raster in QGIS: no idea</li>
+<li>raster in arcgis: old guy on SE says &quot;I think you&#39;ll have to convert [extant] to points anyway. Next step do euclidian allocation to these points. Con(~IsNull(“100%-chance-layer&quot;),&quot;allocation)). Use lookup to convert results into floats.&quot;<ul>
+<li>[ ]  <ul>
+<li>the Euclidian allocation tool seems to work, makes voronois, but takes 5 mins each, do it for both extant WSA and BSA, can script with ArcPy too <a href="http://pro.arcgis.com/en/pro-app/tool-reference/spatial-analyst/euclidean-allocation.htm">http://pro.arcgis.com/en/pro-app/tool-reference/spatial-analyst/euclidean-allocation.htm</a></li>
+<li>Then do this in raster calc, put what you want to reassign in the middle, then the nearest-neighbor albedo fill that you just generated outside: Con(~IsNull(&quot;reassign test\100_chance_wsa_Apr.tif&quot;),&quot;reassign test\ws_apr.tif&quot;)<ul>
+<li>This gets you the WSA and BSA of the extant cities re-assigned to the 100%-chance pixels.</li>
+</ul>
+</li>
+<li>Record change in the % chance pixels as they change, can do this in QGIS</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Okay, assignment happens with Euclidan allocation, now to actually calculate the forcing. Forcing has 3 terms: WSA/BSA albedo from IGBP dataset (assigned to the pixels for extant, 100%, 75%, etc), kernels from shell, then the fraction from MERRA Forcing. Delta WSA <em> change in kernel + delta BSA </em> change in kernel. Shell’s 3-deg kernels aren’t separated into white- and black-sky, but Mutlu’s MERRA reanalysis data separates white-sky and black-sky albedo. coarse but doesn’t matter, includes relative fractions of direct vs. diffuse insolation (interacting with atmo vs. no atmo impact, i.e. white-sky vs. black-sky). includes direct (BSA) map and diffuse (WSA) map, and every pixel has 12 values (1 per month, so pick #4 for april since that&#39;s what we&#39;re testing here). numbers range from 0-100, remember they&#39;re fractions that need to be multiplied by...something, the kernels?<ul>
+<li>those merra things from mutlu: band 4 from diffuse + band 4 from direct = 1. remember, they’re fractions. They’re 32-bit data with stupid cell sizes. may have to resample.</li>
+<li>Shell’s kernels: albedo_sw_monthly.nc is total-sky (I guess white sky?), 12 files one per month, but its extents are all fucked and it aint aligned. UGH<ul>
+<li>I dont know why it only works this way but: get the netcdf into QGIS by dragging &gt; right click save as a tiff, no translate or nothin, then do the below warp on it</li>
+<li>gdalwarp --config CENTER_LONG 0 -overwrite -t_srs &quot;+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs&quot; -wo SOURCE_EXTRA=1000 -of GTiff &quot;/Users/traveler/Dropbox/school stuff/766/doing thesis/outputs/getting shell kernels out of netCDF/april_to_tiff_WSA_kernel.tif&quot; &quot;/Users/traveler/Dropbox/school stuff/766/doing thesis/outputs/getting shell kernels out of netCDF/april_to_tiff_recentering_2.tif” gets it into the right centering</li>
+<li>yields 1.25deg resolution, do “file + just_to_set_extent” in raster calc to match resolution and extents to other data; now it’s resampled to match the albedo data. has nodata along top, right, bottom, but shouldnt mess with stuff too bad. <em>instead of the raster calc trick, I should be able to resample and set extents with gdal_translate or gdal_warp right??? oh well</em><ul>
+<li>gdalinfo NETCDF:/Users/traveler/Dropbox/school\ stuff/766/doing\ thesis/data/CAM\ kernels\ from\ Shell\ 2008/albedo_sw_monthly.nc:monkernel well monkernel is the sub-dataset, but it cant directly access bands from here with another colon. dunno how to dig deeper, the documentation says to use gdal_translate but guh??</li>
+</ul>
+</li>
+<li>she says &quot;The unit in the albedo file is wrong [gdalinfo for the .nc file says W/m&amp;2/K] . It should be w/m^2/(0.01 increase in fractional albedo). That is, the kernel corresponds to an increase of 0.01 in the albedo (though it maxes out a 1).” So “watts per square meter per 0.01 increase in albedo.” area x change = total change in RF.<ul>
+<li>which makes total sense, they’re all negative values; &quot;over <em>this</em> pixel, dropping albedo by 0.01 means a -1.whatever change in watts per square meter of RF.” I guess since the kernels describe the <em>change in forcing per unit change of albedo, this method doesn’t need insolation/SSRD.</em> But then again since it’s only changes, it doesnt make for absolutes. Zhai 2014 says for absolutes you need SSRD/insolation.</li>
+<li>where do mutlu’s fractions come in? let’s talk through what I have, using april data and 100%-chance expansion pixels only<ul>
+<li>WSA for 100%-chance land <em>before</em> it changes</li>
+<li>BSA for 100%-chance land <em>before</em> it changes</li>
+<li>WSA for 100%-chance land <em>after</em> it changes in like 30 years</li>
+<li>BSA for 100%-chance land <em>after</em> it changes in like 30 years<ul>
+<li>why the hell did I do extant albedo? I guess I need that for current forcing, but I dunno how to even calculate that since I need insolation apparently!</li>
+<li>and what the fucking cock was I talking about with “change in kernel,” the kernel values dont change!</li>
+<li>Okay the <em>expansion</em> <em>probability</em> pixels have changes in albedo since they went from previous LC &gt; urban, class 13 albedo. I mean theoretically, I still haven’t generated/received the previous LC map yet. ANYWAY those have changes, and changes are good shit. <strong>✓</strong><ul>
+<li><strong>(((Δ WSA</strong> <strong>x fraction WSA)</strong> <strong>x WSA kernel )</strong> <strong>+ ((Δ BSA</strong> <strong>x fraction BSA)</strong> <strong>x BSA kernel))) x total area = forcing change as all that stuff moves from previous LC to urban. I think this might be it!</strong></li>
+<li>Ghimire: monthly forcing = (Δmonthly WSA x shell’s WSA kernel) + (Δmonthly BSA x shell’s BSA kernel)<ul>
+<li>he didn’t do fractions, should I?</li>
+</ul>
+</li>
+<li>unit shuffle:<ul>
+<li>the kernel is watts/sq meter/0.01 increase in fractional albedo. That is, the kernel corresponds to an increase of 0.01 in the albedo. So “watts per square meter per 0.01 increase in albedo.” does that even apply to decreasing albedo?</li>
+<li>since the fractions are spatial: make a ΔWSA and a ΔBSA calc, multiply by 0.001 since that’s the albedo scale factor. i guess we’re back to 32 bit floats</li>
+<li>then multiply THOSE by the the fraction WSA and fraction BSA</li>
+<li>then, finally, multiply those by the kernel data to see what each Δ in albedo means for RF.<ul>
+<li>albedo goes down, yields a negative value. negative value * neg kernel value = a positive forcing effect, since low albedo means that many more watts/sq meter getting absorbed?</li>
+<li>albedo goes up, yields a positive value. positive value * neg kernel value = negative forcing effect, since high albedo means more watts/sq meter getting reflected?</li>
+</ul>
+</li>
+<li>Used “raster layer statistics” in toolbox to sum them, cumbersome but works, py can definitely do this.<ul>
+<li>as in all things, the histos might be more interesting than the sums; the albedo*kernel files show whether, on balance, there’s more positive or negative forcing<ul>
+<li>well there’s a lot on either side of zero, with the vast majority not increasing or decreasing much at all. duh. not a lot of fat tails</li>
+</ul>
+</li>
+<li>WSA sum for april: 6.42119546358</li>
+<li>BSA sum for april: 12.6113679784</li>
+<li>whole lot more black sky according to the WSA/BSA fraction histos, who knew? why is that?? what the hell is black sky albedo???</li>
+<li>that yields 19.03256344 for total change in forcing per square meter, over the entire earth’s worth of 100%-chance urban land, for April. dividing that by the number of 100%-chance-to-become-urban pixels, 24,588, yields 0.000774 bump in RF per cell. fucking tiny. but, you know, that makes sense since 1) urban land area is tiny in general 2) ghimire says it took 305 years of anthro LC change to get a watts/m^2 drop of -0.16. so this is a drop in a bucket of a drop in a bucket. hahaha this result SUCKS but hey, you knew it’d be small stuff</li>
+</ul>
+</li>
+<li>After that you have to calculate how much area you have covered by those pixels. they&#39;re in geographic coordinates; converting to something with meters necessarily changes the number of cells; that’s not good. I guess it wont really matter if you reproject it the same way each time? So going to do it with world sinusoidal, seems simple enough &quot;+proj=sinu +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs&quot;<ul>
+<li>so that has 20,721 pixels, each pixel 5,564.11m on a side, or 30,959,320.0921 square meters. that’s 641,508,071,628.404 square meters total in the 100%-chance-of-becoming-urban class, or 641,508 sq km, or 247,687 square miles. that’s reasonable compared to the 1.2m square kilometers of TOTAL “any chance at all” land reported by Seto 2012.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+<p><strong>D-fense - monday morning</strong></p>
+<ul>
+<li>Rob: monday May 2 or weds May 4</li>
+<li>Mutlu: monday May 2 before 3:30, 12:30-3pm</li>
+<li>Annemarie: monday May 2</li>
+</ul>
+<p>March 25 - friday morning meet with Mutlu</p>
+<p>April 18 - draft due to Mutlu</p>
+<p>May 2 - defense</p>
+<p><strong>Arc time</strong></p>
+<ul>
+<li>I dont have enough space on bootcamp to get all 40 gigs worth of data uncompressed. so lets try it and then do it on a lab computer. or get an external HDD? might be hella slow...</li>
+<li>albedo data files need headers, theyre in the FTP</li>
+<li>use snap raster in environment settings &gt; processing extent &gt; snap raster to get things aligned. to do so in QGIS: <a href="http://gis.stackexchange.com/questions/159525/rasterization-of-point-vector-in-qgis-how-to-align-the-resulting-raster-to-an-e?rq=1">http://gis.stackexchange.com/questions/159525/rasterization-of-point-vector-in-qgis-how-to-align-the-resulting-raster-to-an-e?rq=1</a></li>
+<li>need to throw out any pixels that went from water &gt; urban since the MODIS LC stuff isnt perfectly coincident? man coastal cities get totally screwed in this analysis, they dont have before-LC. i mean naturally guneralp&#39;s data wont be perfectly co-incident with MODIS right? different datasets? but cmon man its in MODIS-SPHERE while <em>actual</em> MODIS data is in some goofed up clarkes whatever the fuck ellipsoid? what the hell!</li>
+<li>okay guneralp and seto got their just raw coastlines and pixel arrangement from schneider et al, right?<ul>
+<li>this 11 year old thread makes it seem like its a mistake and nobody uses that stupid ass clarkes sphere? <a href="http://forums.esri.com/Thread.asp?c=93&amp;f=984&amp;t=152042">http://forums.esri.com/Thread.asp?c=93&amp;f=984&amp;t=152042</a></li>
+<li>i mean I could nibble out all water, but is that defensible?</li>
+</ul>
+</li>
+<li>D-MODIS sphere is guneralp&#39;s datum? what the hell is that?<ul>
+<li>WGS spheroid \/</li>
+<li>6378137 , 298.257223563</li>
+<li>6378206.4, 294.9786982138982,</li>
+<li>clarke spheroid /\ EPSG 4008</li>
+</ul>
+</li>
+<li>schneiders original 500m LC map resampled to 0.05 deg with nearest neighbor is definitely more generous</li>
+<li>what guneralp said:<ul>
+<li><em>All data used in Goode’s Homolosine Equal-Area , spatial resolution of the maps is 5 km. Year 2000 urban map is (MODIS) land-cover product v5, resample the global urban land-cover map to 5-km resolution from its native resolution of 463 m.</em> So you can get what they used, MCD12Q1.051, from <a href="http://e4ftl01.cr.usgs.gov/MOTA/">http://e4ftl01.cr.usgs.gov/MOTA/</a></li>
+<li><a href="http://e4ftl01.cr.usgs.gov/MOTA/MCD12Q1.051/">Global forecasts of urban expansion to 2030 and direct impacts on biodiversity and carbon pools</a> but they&#39;re all chunked up so you&#39;d have to download, mosaic, reproject. I think it&#39;s 28 gigs...<ul>
+<li>schneiders 500m LC map: they did it themselves from a shitload of raw modis data; maybe their <a href="http://iopscience.iop.org/article/10.1088/1748-9326/4/4/044003/fulltext/">http://iopscience.iop.org/article/10.1088/1748-9326/4/4/044003/fulltext/</a></li>
+<li>MCD12C1.051 is 0.05 deg, which matches our current resolution, but doesnt match up to land/water that guneralp used. They apparently grabbed the 500m then resampled + reprojected to goode&#39;s homolosine equal area. <a href="https://lpdaac.usgs.gov/dataset_discovery/modis/modis_products_table/mcd12c1">https://lpdaac.usgs.gov/dataset_discovery/modis/modis_products_table/mcd12c1</a></li>
+</ul>
+</li>
+<li><em>ignore: Land cover: We convert the VMAP0 vector-based land cover product (19) to raster, reprojected it to Goode’s Homolosine, and resample to 5 km. The reason we use VMAP0 product instead of MODIS v5 as we did for urban extent is that URBANMOD requires the initial data of the land cover to be simulated to be colocated with data from the driver maps. Although the initial urban extent map overlays with the other three driver maps, this would not be the case for the land cover driver map had we used MODIS v5 product to create it.</em></li>
+</ul>
+</li>
+</ul>
+<p><strong>pass for earthdata: Radartime1!</strong></p>
+<p><strong>The Plan</strong></p>
+<ol>
+<li>I have 0.05 degree snow-free shortwave black-sky and white-sky albedo for all IGBP land cover categories, in monthly means (Jan, Feb, March etc.) and standard deviations for each month. Do all analyses month-by-month.<ul>
+<li><em>okay first get all the data aligned, i dont know where this 0.49 deg bullshit came up but everything needs to be in WGS84 and 0.05 deg res. Going to try this in arc, see how far it goes. NOTE: this snaps well.</em></li>
+</ul>
+</li>
+<li>Take the albedo data’s class 13 (urban/built-up) white-sky and black-sky albedos, assign them to currently-urban pixels found in Guneralp’s 0.05 degree “where cities are now and where they will be in 2030” data (Guneralp&#39;s currently-urban pixels are derived from Schneider 2009, just resampled to 0.05 degrees).</li>
+<li>Now we have white-sky and black-sky albedos for all existing cities.</li>
+<li>Assign current albedos to “likely to become urban by 2030” pixels; the pixel values range from 1%-100% probability of becoming urban.<ul>
+<li>5 categories: 1-25%, 25-50%, 50-75%, 75-99%, 100%</li>
+<li>Most of these high-likelihood (100% chance) pixels touch current urban areas, so can use nearest neighbor to assign the albedos of current urban areas to the new pixels. The literature says that the “spreading pancake” model of urban development explains a good portion of expansion patterns, so the albedo values should stay pretty consistent on the edges of urban expansion.</li>
+<li>Can tweak the assigned albedo values using the standard deviations for the currently-urban pixels.</li>
+</ul>
+</li>
+<li>These “likely to become urban by 2030” pixels also have their own a) current land cover categories and b) current albedo values.<ul>
+<li>Find albedo change as they move from their old land cover (<em>need 0.05 deg MODIS IGBP land cover map:</em> <a href="http://e4ftl01.cr.usgs.gov/MOTA/MCD12C1.051/2012.01.01/MCD12C1.A2012001.051.2013178154403.hdf">http://e4ftl01.cr.usgs.gov/MOTA/MCD12C1.051/2012.01.01/MCD12C1.A2012001.051.2013178154403.hdf</a> download, <a href="https://lpdaac.usgs.gov/about/news_archive/modisterra_land_cover_types_yearly_l3_global_005deg_cmg_mod12c1">https://lpdaac.usgs.gov/about/news_archive/modisterra_land_cover_types_yearly_l3_global_005deg_cmg_mod12c1</a> and <a href="https://lpdaac.usgs.gov/dataset_discovery/modis/modis_products_table/mcd12c1">https://lpdaac.usgs.gov/dataset_discovery/modis/modis_products_table/mcd12c1</a> references it has this idiot ass crs &quot;+proj=longlat +ellps=clrk66 +no_defs”, my gdal cant do HDF4, I dont know what the fuck!!!! reprojecting shifts shit all around and I hate it. can I just change the ellipse??) + associated old albedo --&gt; new urban land cover + new associated albedo?</li>
+<li>this is going to be a real nightmare if Guneralp does not cough up his original… (hint: he totally does not check his email)</li>
+</ul>
+</li>
+<li>Calculate change in forcing from all this albedo change<ul>
+<li>Forcing = change in white-sky albedo <em> change in kernel + change in black-sky albedo </em> change in kernel. Shell’s 3 degree kernels aren’t separated into white- and black-sky, but I have it written down from a previous meeting to “use Ghimire’s 2.5 degree data with &#39;share white-sky albedo&#39; and &#39;share black-sky albedo’ for every spot on earth, multiply those fractions by Shell’s kernels.” Did you have Ghimire’s data somewhere? I emailed him last year but didn’t get real far...<ul>
+<li>this has 12 months of data, so keep everything monthly? Or another annual average?</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Deliverables:<ul>
+<li>Uncertainty estimates? what’s a good way to go about this? +/- 1 standard dev GOOD</li>
+<li>Table with which “before” land cover classes will switch to urban/built-up by 2030? GOOD</li>
+<li>Table with “before” albedos and “after” albedos? GOOD</li>
+<li>Range of radiative forcing change? <em>youd get 1 global value with +/- uncertainty around it (expansion will cause tk watts of RF)</em></li>
+<li>Maps- means, variations, uncertainty</li>
+</ul>
+</li>
+</ol>
+<p><strong>mutlu meeting from India:</strong></p>
+<ul>
+<li>do everything by month. but final results will include annual averages of all this shit.</li>
+<li>remember to +/- 1 standard deviations for all these!</li>
+<li>for guneralp’s likely-urban pixels: use different probability thresholds, this could be 25%, 50%, hell any arbitrary numbers. we want to have a lot of stuff for the final tables; we’re tweaking a lot of variables. fuzzy! so pick a few/do it continuously even. if you figure that shit out.</li>
+<li>kernels: he has MERRA reanalysis data, mix of climate models and observation, separates white-sky and black-sky albedo. coarse but doesn’t matter, includes relative fractions of direct vs. diffuse insolation (interacting with atmo vs. no atmo impact). came up with direct &amp; diffuse fraction for each month; direct (BSA) map and diffuse (WSA) map, and every pixel has 12 values (1 per month). numbers range from 0-100. instead of ghimire, use this. these are only fractions! also remember to do +/- 1 standard deviation.<ul>
+<li>forcing has 3 terms: white/black sky albedo from IGBP dataset, kernels from shell, fraction from MERRA</li>
+</ul>
+</li>
+<li>get all the data, generate bunch of results with these, remember all your scenarios.</li>
+</ul>
+<p><strong>Questions for mutlu</strong></p>
+<ul>
+<li>this a good LC dataset for “Before urban”? <a href="https://lpdaac.usgs.gov/about/news_archive/modisterra_land_cover_types_yearly_l3_global_005deg_cmg_mod12c1">https://lpdaac.usgs.gov/about/news_archive/modisterra_land_cover_types_yearly_l3_global_005deg_cmg_mod12c1</a></li>
+</ul>
+<p><strong>Latest meeting</strong></p>
+<p><strong>1. reclassify ca. 2001 urban extent data</strong></p>
+<ul>
+<li>current schema: Global Urban Extent (class 13), including land (class 1) and water (class 0). Also global IGBP Land Cover Map (classes 1-17), including urban extent (class 13) . so it matches up to IGBP<ul>
+<li>actually do we need to do this? The albedo data is 0.05 deg, the predicted urban extent data is 0.05 deg, which includes extant urban areas at 0.05 deg <em>derived from Schneider 2001</em>. so why tf would I bother with Schneider 2001?</li>
+</ul>
+</li>
+</ul>
+<p><strong>2. intersect with new albedo dataset with IGBP categories - really we’re forgetting about the actual albedo measurements. This has it already baked in.</strong></p>
+<ul>
+<li>separated out guneralp 101 pixels (extant 2001 urban areas per Schneider 2009) with raster calc, then converted to 16bit signed to match the bsa shortwave april data, then raster calcd like so: guneralp*0 + albedo_band_13 (since 13 is the urban one), then you get a 32 bit tiff with albedos assigned to the extant city pixels.<ul>
+<li>next up<ul>
+<li>average all WSA and BSA files?<ul>
+<li>(&quot;hierarchical_albedo_igbp_0.05.bsa_shortwave.Jan@13&quot; +</li>
+<li>&quot;hierarchical_albedo_igbp_0.05.bsa_shortwave.Feb@13&quot; +</li>
+<li>&quot;hierarchical_albedo_igbp_0.05.bsa_shortwave.Mar@13&quot; +</li>
+<li>&quot;hierarchical_albedo_igbp_0.05.bsa_shortwave.Apr@13&quot; +</li>
+<li>&quot;hierarchical_albedo_igbp_0.05.bsa_shortwave.May@13&quot; +</li>
+<li>&quot;hierarchical_albedo_igbp_0.05.bsa_shortwave.Jun@13&quot; +</li>
+<li>&quot;hierarchical_albedo_igbp_0.05.bsa_shortwave.Jul@13&quot; +</li>
+<li>&quot;hierarchical_albedo_igbp_0.05.bsa_shortwave.Aug@13&quot; +</li>
+<li>&quot;hierarchical_albedo_igbp_0.05.bsa_shortwave.Sep@13&quot; +</li>
+<li>&quot;hierarchical_albedo_igbp_0.05.bsa_shortwave.Oct@13&quot; +</li>
+<li>&quot;hierarchical_albedo_igbp_0.05.bsa_shortwave.Nov@13&quot; +</li>
+<li>&quot;hierarchical_albedo_igbp_0.05.bsa_shortwave.Dec@13&quot;) / 12 works, but is that the correct way of doing this?</li>
+</ul>
+</li>
+<li>use the std dev somehow? I have no idea</li>
+<li>assign potential-expansion pixels<ul>
+<li>took guneralp original, saved out 100-class, now have certain-expansion pixels and extant-city pixels with albedo values. how to assign the current albedo values to their new neighbors?</li>
+<li>gdal_calc.py doesnt fucking work, throws an “image not found” error</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>3. figure out how to assign new albedo values! GIS problem, requires lit review and a defensible method</strong></p>
+<ul>
+<li>2/11 - chat with Zhu<ul>
+<li>well, you’re making a shitload of assumptions, so the best hting to do would just go by spatial autocorrelation. try tobler’s ’72 paper and the 2004 AAG conference proceedings; they even had a paper on urban settings. you can reason this out instead of citing; really the new urban pixels is of similar cover to the stuff before it (tk cite) and thus you can just average the adjacent already-urban stuff.</li>
+<li>two pixels over and up from the new unknown one, weight the closer ones more than the far, assign the average to the new pixel.</li>
+<li>“connectivity analysis” to determine which are closest and which are far</li>
+<li>so now, according to mutlu, just test it out; assigning the stuff shouldnt be that hard. you have the data; try a test run.</li>
+</ul>
+</li>
+<li>there’s new albedo data IGBP LC cover categories, includes 13 urban land; so it has monthly avg albedo composites. so a single value instead of having to average 10 years worth of data. 2000-2010, same as before, we’re using this, no GEE needed!<ul>
+<li>all urban pixels co-incident with annemaries, at 5km res, same as guneralp!</li>
+<li>think he’s talking about <a href="http://modis.gsfc.nasa.gov/sci_team/meetings/201304/presentations/plenary/masek.pdf">http://modis.gsfc.nasa.gov/sci_team/meetings/201304/presentations/plenary/masek.pdf</a></li>
+</ul>
+</li>
+<li>take schneider ca. 2001 urban LC map<ul>
+<li>reclassify it to 0-1, 13 goes to 1, everything else goes to 0</li>
+<li>downsample to 0.05deg resolution (appx 5km as guneralp)<ul>
+<li>&quot;MODIS does not use the &quot;Normal Sphere (r=6370997) but 6371007.181” same as schneider, same as all MODIS shit</li>
+<li>also guneralp’s “existing urban areas” are taken from schneider anyway?</li>
+</ul>
+</li>
+<li>GDAL warp -tr 0.05 0.05, EPSG4326 input and output srs, -r average, -ot float 32 bit</li>
+</ul>
+</li>
+<li>get Seto-guneralp data into same config as schneider - <a href="https://web.archive.org/web/20141110212613/http://bguneralp.tamu.edu/">https://web.archive.org/web/20141110212613/http://bguneralp.tamu.edu/</a> the real download site got killed but its still up here<ul>
+<li>for some idiotic reason it came as &quot;+proj=longlat +a=6371007 +b=0 +no_defs”. used &quot;gdal_translate -a_nodata 255 -a_srs &quot;+proj=igh +R=6371007 +no_defs”” on the goode-homolosine data they provided, this just assigns it the correct projection. Then warped to WGS84 while keeping the nodata value, nearest neighbor resampling.</li>
+<li>so the workflow: dump ESRI GRID folder into QGIS &gt; save as a TIFF &gt; assign its bad SRS to it with translate &gt; convert to WGS84 with warp</li>
+<li>using nearest neighbor when you convert to WGS84 is most conservative, but leaves a lot of shit uncovered; that notch in chicago for a lot of nodata over japan. can use other resampling methods but then you’re just introducing error.</li>
+<li>since schneider comes in goodes too (albeit of course with fucked up projection info on the .bip, what the hell), pulling the exact same -a_srs trick except with 6371007.181 on the schneider bip and overlaying with the properly-assigned-projection guneralp data yields much better alignment on chicago and japan; basically no processing here except assigning the correct projection.<ul>
+<li>so goode + goode makes a right, but that leaves the albedo data i’d have to reproject…if i can get guneralp to cough up a WGS84, would make my life hella easier. asked him.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>then intersect with the new albedo dataset, (its in WGS84), do it for all 12 months, at BSA and WSA. so 24 times total. at the very end, you’d have 24 values: observed monthly BSA, observed monthly WSA</li>
+<li>now intersect with guneralp map, which dictates where NEW urban pixels will appear. but how do we assign new albedo values to these pixels? nearest neighbor? average? what’s a defensible GIS method of assigning new values to neighboring pixels? Something that makes sense in terms of land cover change. Guneralp could have a method? Predictive land cover change?<ul>
+<li>get averages + std devs for contiguous currently-urban pixels. then generate new maps where you have diff methods of assigning new albedo values:<ul>
+<li>mean assigned to new value</li>
+<li>+std dev assigned to new values</li>
+<li>std dev assigned to new values</li>
+<li>also do it randomly!<ul>
+<li>contiguous urban pixel albedos, grab an albedo value out of a hat, assign it to the new pixel.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>after that’s done you have a future albedo map. also know the albedo CHANGE of each pixel since that new albedo dataset has BSA + WSA albedo values for every single pixel and LC type! which is great since you know the OLD LC type and can say “eat into forest, tk albedo change, eat into desert, tk albedo change&quot;<ul>
+<li>[ ]  <ul>
+<li>forcing = change in WS albedo <em> change in kernel + change in BS albedo </em> change in kernel. but shell’s kernels aren’t separated into WSA and BSA.</li>
+<li>Ghimire used a coarse 2.5deg reanalysis dataset that has “share WSA” and “share BSA” for every spot on earth; take shell’s kernels and multiply by those WSA and BSA fractions.<ul>
+<li>this has 12 months of data, so keep everything monthly</li>
+</ul>
+</li>
+<li>repeat this with ANOTHER set of kernels, the one shell linked to but 404’d; Mutlu has these, so you can get em when the time comes</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>latest meeting:</p>
+<p>white-sky modis albedo differences t1 - white-sky modis albedo differences t2</p>
+<p>same thing for black-sky MODIS albedo</p>
+<p>total sky = white sky = includes atmo effects</p>
+<p>clear sky = black sky = removes atmo effects</p>
+<p>negative values for all these files means that surface albedo in that area</p>
+<ul>
+<li>maybe a positive absorbs energy</li>
+<li>negative values = more reflection of energy back into space</li>
+<li>get the albedo differences between date1=2000 and date2=2010, just use GEE</li>
+<li>jan 2000 jan 2010, feb 2000 feb 2010</li>
+<li>earlier - later or later - earlier? check ghimire</li>
+<li>use GEE, then mask out the ca. 2000 urban extent</li>
+<li>annemarie might have 2010 extent, i know i can get 2000. ask annemarie for year 2000 again</li>
+</ul>
+<p><strong>Meeting</strong></p>
+<ul>
+<li>2030 city extent predictions are 5km res, coarse, is that still valid?<ul>
+<li>if the RF signal from albedo is totally lost at the global level, you could do it on a smaller scale.</li>
+<li>radloff has 2100-growth proj for urban areas in the US only</li>
+<li>just concentrate on current cities, see the current spatial variation over the current urban extent</li>
+</ul>
+</li>
+<li>also my solar radiation data is 14km res (0.125 deg), so does it matter if I use 1km albedo data instead of 500m? because 1km albedo is already loaded in google earth engine and thats waaay easier<ul>
+<li>insolation data can be coarse. climatology = you averaged all julys.</li>
+<li>500m preferred for mapmaking; can you email simon <em>__</em> to ask if he can ingest 500m?</li>
+<li>but you can use the 1km to get the WSA and BSA coefficients as a start, let’s test with that. scale up with 500m.<ul>
+<li>do even more in GEE: test it on a small area of ca. 2000 extent. one of the climate data sets in GEE has solar radiation, too.</li>
+</ul>
+</li>
+<li><strong>fuck the SSRD, just use the 3x3 deg kernels</strong></li>
+</ul>
+</li>
+<li>white and black sky albedo is bewildering me; zhai 2014 used white sky for &quot;Radiative forcing over China due to albedo change caused by land cover change during 1990–2010&quot;<ul>
+<li>Ghimire 2014, crystal schaaf if the colleague. write barden ghimire, tell him youre trying to calculate some RF, we’re trying to use radia</li>
+<li>try kernel approach. they used Shell et al paper; i cant figure out how you derived those from shell. “how do you get those coefficients used in the radiative kernels, Kws and Kbs? are they spatial or constant?” if you get those, you may be able to skip the insolation step.<ul>
+<li>he sent me to <a href="http://people.oregonstate.edu/~shellk/kernel.html">http://people.oregonstate.edu/~shellk/kernel.html</a>, downloaded CAM kernels (community atmo model),<ul>
+<li>CDO usage in terminal: /Users/traveler/Applications/CDO/bin/cdo <operator> <input name> <output name>, also check the documentation<ul>
+<li>has water vapor, surface temp, CO2, albedo, and planck? what’s planck?</li>
+</ul>
+</li>
+<li>the kernels seem to be in daily steps stedda monthly, likely a mistake. changed with settaxis to monthly.</li>
+<li>3x3 deg data, clear sky and cloudy-sky albedo. dunno if its white or black sky tho???</li>
+<li>&quot;The unit in the albedo file is wrong. It should be w/m^2/(0.01 increase in fractional albedo). That is, the kernel corresponds to an increase of 0.01 in the albedo (though it maxes out a 1).&quot;</li>
+<li>Shell sez:<ul>
+<li>CAM3_albedo_sw_kernel.nc and CAM3_albedo_sw_clr_kernel.nc are effects of surface albedo on total-sky and clear-sky albedos</li>
+<li>and each includes both diffuse and direct effects (black and white sky, shortwave and longwave)</li>
+</ul>
+</li>
+<li><strong>just download 2000-2010 BS and WS albedo, 1km data on GEE, do jan 2010-jan 2000, feb 2010-feb 2000 etc, mask over with ca. 2001 urban extents</strong></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>PV paper assumes a constant “shortwave radiation absorbed by atmo;” we think shell et al 2008 and thus ghimire 2014 had a spatially-varying term.</li>
+<li>if this goes nowhere, THEN continue with ECMWF data.</li>
+</ul>
+</li>
+<li><em>let’s make this work over one pixel. 2000 albedo is .1, 2010 albedo is .5, what’s the RF change? if we can get the equation to work, then we can scale it up.</em><ul>
+<li>[ ]  <ul>
+<li>global urban now</li>
+<li>global urban then</li>
+<li>expansion of forcing data</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>The plan so far</strong></p>
+<ul>
+<li>not going to worry about maxent so far: just do the albedo part</li>
+<li>ca. 2000 city extent = 500m <strong>need from annemaries</strong></li>
+<li>ca. 2030 city extent = 5km <strong>in hand</strong></li>
+<li>albedo = 500m/1km <strong>can grab manually at 500m, what a drag, or GEE has 1km loaded already</strong></li>
+<li>radiative kernels = 3deg resolution <strong>coarse as hell</strong></li>
+<li>SSRD = 0.125 deg/14km at equator. zhai used 0.75 deg, so who cares (0.75 GRIB data is just as much of a pain in the ass as netCDF, so lets go higher res)<ul>
+<li>take 10 years of MODIS albedo data, average 10 years of june, 10 years of july, etc. Also take std devs of those. End up with 24x global albedo maps.<ul>
+<li>remember to use floating point data, watch your scaling factors</li>
+<li>advice from jeff<ul>
+<li>GDAL info : will tell you info about netcdf, what’s in there, the size and res and projection. then do another GDAL info on the variables within the netcdf, variable names and stuff.</li>
+<li>write GDAL translate command based on that metadata info.</li>
+<li>use jeff’s script to convert netCDF to ascii with a matlab script, loop through with python, convert to geotiff and average them. then you have a geotiff for each day and an average.</li>
+</ul>
+</li>
+<li>&quot;White-sky is the bihemispherical reflectance under conditions of isotropic illumination, so it has the angular dependency removed. Black-sky is the directional hemispherical reflectance computed at local solar noon.” <a href="http://modis-atmos.gsfc.nasa.gov/ALBEDO/faq.html">http://modis-atmos.gsfc.nasa.gov/ALBEDO/faq.html</a><ul>
+<li>directional hemispherical reflectance (black-sky albedo) and the bihemispherical reflectance under isotropic illumination (white-sky albedo)</li>
+</ul>
+</li>
+<li>Google Earth Engine Developers is the user group</li>
+<li>1 arc minute = 1.8km, 30 arc seconds = 1km, 1 degree = 111km</li>
+<li><a href="http://e4ftl01.cr.usgs.gov/MOTA/">http://e4ftl01.cr.usgs.gov/MOTA/</a> al MCD43 data in ftp form if you want to get your curl on</li>
+<li><a href="https://lpdaac.usgs.gov/dataset_discovery/modis/modis_products_table">https://lpdaac.usgs.gov/dataset_discovery/modis/modis_products_table</a> main products table<ul>
+<li><a href="https://lpdaac.usgs.gov/dataset_discovery/modis/modis_products_table/mcd43b3">https://lpdaac.usgs.gov/dataset_discovery/modis/modis_products_table/mcd43b3</a> 1km albedo, zhai used this with the QA flags at <a href="https://lpdaac.usgs.gov/dataset_discovery/modis/modis_products_table/mcd43b2">https://lpdaac.usgs.gov/dataset_discovery/modis/modis_products_table/mcd43b2</a>, which</li>
+<li><a href="https://lpdaac.usgs.gov/dataset_discovery/modis/modis_products_table/mcd43a3">https://lpdaac.usgs.gov/dataset_discovery/modis/modis_products_table/mcd43a3</a> 500m albedo</li>
+</ul>
+</li>
+<li><a href="https://www.umb.edu/spectralmass/terra_aqua_modis/v006/mcd43a3_albedo_product">https://www.umb.edu/spectralmass/terra_aqua_modis/v006/mcd43a3_albedo_product</a> another description</li>
+<li><a href="http://gis.stackexchange.com/questions/39279/mcd43a3-modis-products">http://gis.stackexchange.com/questions/39279/mcd43a3-modis-products</a> someone else hassling with this data</li>
+<li><a href="http://hdfeos.org/zoo/index_openLPDAAC_Examples.php">http://hdfeos.org/zoo/index_openLPDAAC_Examples.php</a> process MCD with python and GDAL; try the MCD43C1 example towards the top. guy doing same thing, remember to filter out fill values and convert to float <a href="http://hdfeos.org/forums/showthread.php?t=534">http://hdfeos.org/forums/showthread.php?t=534</a></li>
+<li>to start modis reproj tool GUI: navigate to folder in downloads in terminal, get into MRT/bin, type ./ModisTool. or just go in the damn folder and click “ModisTool&quot;</li>
+</ul>
+</li>
+<li>insolation<ul>
+<li>the insolation data used in nemet is 1x1 deg; EWCF SSRD is 0.75 deg GRIB or 0.125 deg netCDF, <a href="http://gewex-srb.larc.nasa.gov/">http://gewex-srb.larc.nasa.gov</a> gewex SRB/SSE from NASA is 1x1 deg</li>
+<li>use step 3, grab both 0 and 12 time periods for anne to average</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>[ ]  <ul>
+<li>Overlay on top of current urban extent: Schneider’s ca. 2000 map<ul>
+<li>schneider might have an updated one, he’ll ask</li>
+<li>seto/guneralp is at 5km res</li>
+</ul>
+</li>
+<li>Now you have current urban albedos. then take as much SSRD data as you have, do the same thing: 3 junes, 3 augusts, etc, etc. Take means and std. devs.<ul>
+<li>python time!</li>
+</ul>
+</li>
+<li>Overlay insolation on top of that.<ul>
+<li>check resolutions of all these</li>
+</ul>
+</li>
+<li>Using your good-as-hell defensible RF equation + your albedo measurements + your insolation, you can get RF. Bam, current RF.</li>
+<li>Do all that shit above for guneralp’s 2030 map</li>
+<li>there, take the difference, see how much less/more you get. voila!</li>
+</ul>
+</li>
+</ul>
+<p><strong>other nuts and bolts</strong></p>
+<ul>
+<li>committee is mutlu, annemarie, rob or jack williams. ask rob first</li>
+<li>need to gather your committee at some point and show them something good</li>
+<li>For methods: check Zhai 2014, Schwaab 2014</li>
+<li><a href="http://ibis.colostate.edu/WebContent/WS/ColoradoView/TutorialsDownloads/A_Maxent_Model_v7.pdf">http://ibis.colostate.edu/WebContent/WS/ColoradoView/TutorialsDownloads/A_Maxent_Model_v7.pdf</a> maxent tutorial, has thresholding and converting ASCII to raster in arcgis</li>
+<li>uhh do i need to care about GDP and pop increases?</li>
+<li>how to restrict MaxEnt output to not go crazy?</li>
+<li>per Allison Thieme: make sure everything’s in ASCII grid, each run gets its own folder cuz MaxEnt tries to grab everything thats in the directory.</li>
+<li>high albedo = more radiation thrown back into the damn emptiness of space</li>
+<li>in Zhai 2014: RF change = negative SSRD * (albedo date 2 - albedo date 1). so a drop in albedo gets you a positive RF, a rise in albedo gets you a negative RF. if you just do it for one date, e. g. <a href="http://www.acs.org/content/acs/en/climatescience/atmosphericwarming/climatsensitivity.html">http://www.acs.org/content/acs/en/climatescience/atmosphericwarming/climatsensitivity.html</a>, you do something different:
+ΔF = (1 – α)Save – εσTP^4
+α = Earth’s albedo. a higher figure means you destroy more of the Save term, lowering the whole end of that equation
+Save = average solar energy flux, 342 W·m–2
+ε = effective emissivity of the planetary system
+σ = Stefan-Boltzmann constant
+TP = average planetary surface temperature.
+If ΔF is zero, the energies are balanced, no warming or cooling.</li>
+<li>And according to: <a href="http://my.net-link.net/~malexan/Climate-Model.htmInsolation">http://my.net-link.net/~malexan/Climate-Model.htmInsolation</a> (energy absorbed at earth’s surface) = 1/4 <em> solar constant </em> (1 - albedo)
+solar constant = 1370 watts per square meter, which is hella much more than SSRD, so what gives?</li>
+<li>have SSRD netCDF data<ol>
+<li>get it for a full day: synoptic monthly means, time 0 and 12, add them together for each month&quot;you can calculate the monthly means of daily forecast accumulations (for step 12) by adding together the synoptic monthly means at time 00, step 12 and time 12, step 12.&quot;</li>
+<li>process to 3-year average of all that monthly shit</li>
+<li>convert each band to tiff, raster calculator works, but you get negative values. how to relate the two I have no idea</li>
+</ol>
+</li>
+<li>grab albedo data<ol>
+<li>process to same timeframe</li>
+</ol>
+</li>
+<li>extract ca. 2000 urban extents</li>
+<li>use that as a mask on albedo and SSRD</li>
+<li>there, RF for 2000.</li>
+</ul>
+<p>Calculating 1/2001 to 12/2002 mean SSRD:</p>
+<p>(&quot;netcdf-atls00-a562cefde8a29a7288fa0b8b7f9413f7-PYotfi@1&quot;+ &quot;netcdf-atls00-a562cefde8a29a7288fa0b8b7f9413f7-PYotfi@2&quot;+ &quot;netcdf-atls00-a562cefde8a29a7288fa0b8b7f9413f7-PYotfi@3&quot;+ &quot;netcdf-atls00-a562cefde8a29a7288fa0b8b7f9413f7-PYotfi@4&quot;+ &quot;netcdf-atls00-a562cefde8a29a7288fa0b8b7f9413f7-PYotfi@5&quot;+ &quot;netcdf-atls00-a562cefde8a29a7288fa0b8b7f9413f7-PYotfi@6&quot;+ &quot;netcdf-atls00-a562cefde8a29a7288fa0b8b7f9413f7-PYotfi@7&quot;+ &quot;netcdf-atls00-a562cefde8a29a7288fa0b8b7f9413f7-PYotfi@8&quot;+ &quot;netcdf-atls00-a562cefde8a29a7288fa0b8b7f9413f7-PYotfi@9&quot;+ &quot; netcdf-atls00-a562cefde8a29a7288fa0b8b7f9413f7-PYotfi@10&quot;+ &quot;netcdf-atls00-a562cefde8a29a7288fa0b8b7f9413f7-PYotfi@11&quot;+ &quot;netcdf-atls00-a562cefde8a29a7288fa0b8b7f9413f7-PYotfi@12&quot;+ &quot;netcdf-atls00-a562cefde8a29a7288fa0b8b7f9413f7-PYotfi@13&quot;+ &quot;netcdf-atls00-a562cefde8a29a7288fa0b8b7f9413f7-PYotfi@14&quot;+ &quot;netcdf-atls00-a562cefde8a29a7288fa0b8b7f9413f7-PYotfi@15&quot;+ &quot;netcdf-atls00-a562cefde8a29a7288fa0b8b7f9413f7-PYotfi@16&quot;+ &quot;netcdf-atls00-a562cefde8a29a7288fa0b8b7f9413f7-PYotfi@17&quot;+ &quot;netcdf-atls00-a562cefde8a29a7288fa0b8b7f9413f7-PYotfi@18&quot;+ &quot;netcdf-atls00-a562cefde8a29a7288fa0b8b7f9413f7-PYotfi@19&quot;+ &quot;netcdf-atls00-a562cefde8a29a7288fa0b8b7f9413f7-PYotfi@21&quot;+ &quot;netcdf-atls00-a562cefde8a29a7288fa0b8b7f9413f7-PYotfi@22&quot;+ &quot;netcdf-atls00-a562cefde8a29a7288fa0b8b7f9413f7-PYotfi@23&quot;+ &quot;netcdf-atls00-a562cefde8a29a7288fa0b8b7f9413f7-PYotfi@24&quot;+ &quot;netcdf-atls00-a562cefde8a29a7288fa0b8b7f9413f7-PYotfi@25&quot;+ &quot;netcdf-atls00-a562cefde8a29a7288fa0b8b7f9413f7-PYotfi@26&quot;+ &quot;netcdf-atls00-a562cefde8a29a7288fa0b8b7f9413f7-PYotfi@27&quot;+ &quot;netcdf-atls00-a562cefde8a29a7288fa0b8b7f9413f7-PYotfi@28&quot;+ &quot;netcdf-atls00-a562cefde8a29a7288fa0b8b7f9413f7-PYotfi@29&quot;+ &quot;netcdf-atls00-a562cefde8a29a7288fa0b8b7f9413f7-PYotfi@30&quot;+ &quot;netcdf-atls00-a562cefde8a29a7288fa0b8b7f9413f7-PYotfi@31&quot;+ &quot;netcdf-atls00-a562cefde8a29a7288fa0b8b7f9413f7-PYotfi@32&quot;+ &quot;netcdf-atls00-a562cefde8a29a7288fa0b8b7f9413f7-PYotfi@33&quot;+ &quot;netcdf-atls00-a562cefde8a29a7288fa0b8b7f9413f7-PYotfi@34&quot;+ &quot;netcdf-atls00-a562cefde8a29a7288fa0b8b7f9413f7-PYotfi@35&quot;+ &quot;netcdf-atls00-a562cefde8a29a7288fa0b8b7f9413f7-PYotfi@36&quot;) / 36</p>
+<ul>
+<li><strong>NOTES FROM MUTLU*</strong></li>
+<li>for MaxEnt: masking is important, try it on ONE urban area first, like in the uS before you go around the whole damn world.</li>
+<li>for RF calc: you dont need a climate model or any of that shit; you’re only interested in incoming solar radiation for that pixel; january, feb, same temporal span as your albedo MODIS, perturbed by a random value so you get variacne in there; cloudy, sunny, anything in between. use SSRD: Zhai 2014 used european SSRD <a href="http://apps.ecmwf.int/datasets/data/interim-full-daily/">http://apps.ecmwf.int/datasets/data/interim-full-daily/</a> doesnt need insanely high temporal res or land-air-water interactions.</li>
+<li>Measure the albedo-linked RF from existing global urban areas; this is a GIS and modeling operation, basically.</li>
+<li>[ ]  <ul>
+<li>Download current albedo data: both Aqua + Terra Albedo 16-Day L3 Global 0.05Deg Climate Model Grid, 1/2000 to 1/2000, monthly data, processed to a 3-year average using both white sky albedo (includes contributions from atmospheric scattering) and black sky albedo (excludes those)</li>
+<li>Apply over 2010 urban extent data: any MODIS albedo pixel that isn’t over one of these pixels aint an urban albedo value and can be discarded</li>
+<li>converting this albedo to radiative forcing, now that’s a challenge. That involves a radiation and atmospheric model like Goddard Earth Observing System Model, Version 5, which incorporates incoming radiation + weather + land cover that you give it. An alternative would be to use “radiative kernels,” but I’ve read three descriptions and skimmed two papers and still couldn’t tell you exactly what it is.</li>
+</ul>
+</li>
+<li></li>
+<li>Adapt the MaxEnt SDM to predict future urban expansion out to 2030 over a limited, area and if that works, extend it to the world. I don’t know how to get it to 2030 specifically, this is only a “potential” map.<ul>
+<li>Gather spatial data</li>
+</ul>
+</li>
+<li>[ ]  <ul>
+<li>[ ]  <ul>
+<li>Try it globally: used inputs from current gold standard, seto et al 2012<ol>
+<li>Current city extent: 2010 500m MODIS global urban land cover, Schneider et al 2014</li>
+<li>Land cover: here’s water, where cities cant go, 500m global MODIS land cover</li>
+<li>Population density over every damn inch of the world: Gridded Population of the World, version 3 (GPWv3), 2010, 5km res</li>
+<li>Elevation and slope, because cities cant climb mountains, use to make a mask of where they cant go (big elevation differential between cells, threshold tbd): 90m Shuttle Radar Topography Mission Digital Elevation Model and 1km Global Land One-kilometer Base Elevation (GLOBE) Digital Elevation Model</li>
+<li>Roads: VMAP0 from NGA, 1:1m scale</li>
+</ol>
+</li>
+<li>Try it regionally<ol>
+<li>Here’s where cities are now: % impervious USGS, 100% impervious as threshold</li>
+<li>Land cover: NLCD 2011 land cover, here’s water, where cities cant go, 30m res</li>
+<li>Population density: U.S. Census Grid, 2000 population, 1km res by Center for International Earth Science Information Network</li>
+<li>Elevation and slope: NED 10m/ 1/3 arc second DEM</li>
+<li>Roads: TIGER/LINE from U.S. census bureau</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>Feed into MaxEnt<ul>
+<li>Convert all city raster points to single lat/longs, which isn’t hard</li>
+<li>Convert all “predictors”, the inputs, into .asc grid format</li>
+<li>Mask out areas that have absurd elevation differences</li>
+<li>Restrict outputs to contiguous pixels, since cities cant leapfrog. Do this before or after, preferably before but I’ll have to figure out how to do that</li>
+<li>Threshold it to only output where its like 99.999% sure it can go because I’ve seen the outputs and they can get kinda, uh, generous</li>
+<li>Might have to learn some simple scripting to get this to run multiple times without pointy clicky</li>
+</ul>
+</li>
+</ul>
+</li>
+<li></li>
+<li>Measure future albedo-linked RF resulting from expansion of global urban areas.<ul>
+<li>Compare the output to gold standard prediction map, see if its wildly different in degree of expansion</li>
+<li>After the U.S. or global maxent output is done, take the tippy-top highest values, overlay over current 2000 urban areas, and do the modeling from step one this map. There, you have new RF values generated from MaxEnt, two firsts man! (lotta uncertainty here; why would the albedo of old be the albedo of the new? density? uhh set that aside)</li>
+</ul>
+</li>
+</ul>
+<p><strong>Actually writing thesis</strong></p>
+<ol>
+<li>Introduction<ol>
+<li>research question and significance - main goal is RF and albedo feedback. emissions accounted, surface albedo not so much<ol>
+<li>whast the global impact? water quality, heat island, health effects.</li>
+<li>IPCC albedo change RF doesnt include urban areas</li>
+<li>local-scale effects with albedo<ol>
+<li>UHI, health, green roofs and that nonsense</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>existing work, how this differs. 1-2 sentences on what they did.</li>
+<li>what’s the gap in our knowledge (local scale is here, global is missing, and there’s gonna be lots of this)</li>
+<li>overview of what I did; this is global, not local, and new methods here.</li>
+</ol>
+</li>
+<li>Literature review<ol>
+<li>anthropogenic surface albedo change<ol>
+<li>ghimire and soden</li>
+</ol>
+</li>
+<li>albedo change and RF</li>
+<li>albedo change as remedy</li>
+<li>Gao - MODIS albedo product did it at 0.05</li>
+</ol>
+</li>
+<li>Methods<ol>
+<li>Data - describe each one.<ol>
+<li>took seto and guneralp, schneider 2001, reprojected both to WGS84</li>
+<li>the albedo dataset; describe its provenance and how they did it</li>
+</ol>
+</li>
+<li>methodology<ol>
+<li>have the flow chart</li>
+</ol>
+</li>
+<li>science behind calculation</li>
+</ol>
+</li>
+<li>Results</li>
+<li>Discussion</li>
+<li>Conclusion</li>
+<li>Works cited</li>
+</ol>

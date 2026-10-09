@@ -1,0 +1,341 @@
+/* evanapplegate.com: layout of the main page, map design files and the map gift guide.
+   Fonts, link colours, the paper background and the audio player come from the shared theme, site.css,
+   which loads after this file. Spacing comes from the generated classes at the end of this file. */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+html {
+  -webkit-text-size-adjust: 100%;
+}
+body {
+  margin: 0;
+  overflow-x: clip;
+  color: #696464;
+  font-size: 14px;
+  line-height: 1.3;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+[hidden] {
+  display: none !important;
+}
+img,
+video,
+iframe,
+audio {
+  display: block;
+  max-width: 100%;
+}
+img,
+video {
+  height: auto;
+}
+p,
+h1,
+h2 {
+  margin: 0;
+}
+h1,
+h2 {
+  font: inherit;
+}
+:where(ul, ol) {
+  margin: 1em 0; /* zero specificity, so a list that is a whole block takes the block spacing */
+  padding-left: 40px;
+}
+:is(ul, ol) :is(ul, ol) {
+  margin: 0;
+}
+
+/* ---------- grids: Dorik's fluid columns ---------- */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(var(--n), minmax(0, 1fr));
+  column-gap: 5px;
+  align-items: start;
+}
+:where(.grid > div) > * {
+  display: block;
+  margin: 0;
+}
+:where(.grid > div > div) > :first-child {
+  margin-top: 0;
+}
+:where(.grid > div > div) > :last-child {
+  margin-bottom: 0;
+}
+.contained {
+  width: 100%;
+  margin-inline: auto;
+  padding-inline: 15px;
+}
+@media (min-width: 640px) { .contained { width: 540px; } }
+@media (min-width: 768px) { .contained { width: 750px; } }
+@media (min-width: 1024px) { .contained { width: 1000px; } }
+@media (min-width: 1280px) { .contained { width: 1140px; } }
+@media (max-width: 1023px) {
+  .grid {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+@media (max-width: 767px) {
+  .hide-phone { display: none !important; }
+}
+@media (min-width: 768px) and (max-width: 1023px) {
+  .hide-tablet { display: none !important; }
+}
+@media (min-width: 1024px) {
+  .hide-desktop { display: none !important; }
+}
+
+/* rules: a 1px line in an 18px box, as Dorik drew them (90% wide and centred on the gift guide) */
+.grid hr {
+  height: 18px;
+  border: 0;
+  background: linear-gradient(#d0cbc1, #d0cbc1) 0 9px / 100% 1px no-repeat;
+}
+.grid hr.narrow {
+  background-position: 50% 9px;
+  background-size: 90% 1px;
+}
+
+/* pictures, videos, the Vimeo player */
+.grid :is(img, video, iframe) {
+  border-radius: 5px;
+}
+:where(.grid) :is(img, video) {
+  width: 100%; /* the generated w-* classes override this */
+}
+:where(.grid) iframe {
+  width: 100%;
+  height: auto;
+  border: 0;
+}
+.grid .cover {
+  object-fit: cover;
+}
+.tone {
+  filter: grayscale(var(--grayscale, 0%)) sepia(var(--sepia, 0%)) brightness(var(--brightness, 100%))
+    hue-rotate(var(--hue-rotate, 0deg)) saturate(var(--saturate, 100%));
+}
+.grid img.mx-auto {
+  margin-inline: auto;
+}
+.center {
+  text-align: center;
+}
+.right {
+  text-align: right;
+}
+
+/* "Great news" links: the emoji sits in a gutter to the left, so every line of text and its underline start at
+   the same edge; a blank line between links */
+.link-list {
+  padding: 0;
+  list-style: none;
+}
+.link-list li + li {
+  margin-top: 1lh; /* a blank line between links, as the <br><br> on the Dorik page made */
+}
+.link-list a {
+  display: inline-block;
+  position: relative;
+  padding-left: 1.536em;
+}
+.link-list .emoji {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1.272em;
+  text-align: center;
+}
+@media (max-width: 767px) {
+  .link-list a {
+    padding-left: 1.495em;
+  }
+  .link-list .emoji {
+    width: 1.234em;
+  }
+}
+
+/* LinkedIn icon */
+.social {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-right: 10px;
+  line-height: 1;
+}
+.social svg {
+  display: block;
+  width: 50px;
+  height: 50px;
+  fill: #696464;
+}
+
+/* ---------- contact forms (Formspree; their states are in site.css) ---------- */
+.contact .form-control {
+  display: block;
+  width: 100%;
+  min-height: 50px;
+  margin: 0 0 10px;
+  padding: 10px 15px;
+  border: 1px solid #d0cbc1;
+  border-radius: 5px;
+  background: #f9f9f8;
+  color: #171a21;
+  font: 14px/1.15 var(--font);
+}
+.contact textarea.form-control {
+  margin-bottom: 15px; /* Dorik's inline textarea left 5px of line below it */
+}
+.contact button {
+  display: block;
+  width: 100%;
+  height: 50px;
+  padding: 0 30px;
+  border: 0;
+  border-radius: 5px;
+  background: #b6ac98;
+  color: #fff;
+  font: 18px var(--font);
+}
+.contact button.pale {
+  background: #d0cbc1;
+}
+.success-message,
+.error-message {
+  margin-top: 10px;
+  padding: 10px 15px;
+  border-radius: 3px;
+  background: #fff;
+  font-size: 14px;
+  text-align: center;
+}
+.error-message {
+  color: #ff3a28;
+}
+
+/* ---------- gift guide rows fade up as they scroll in (site.js; desktop only) ---------- */
+.reveal-ready [data-reveal] {
+  opacity: 0;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.reveal-ready [data-reveal='fade-up'] {
+  transform: translateY(100px);
+}
+.reveal-ready [data-reveal].revealed {
+  opacity: 1;
+  transform: none;
+}
+
+/* grid columns in use (generated) */
+.g1 { --n: 1; }
+.g2 { --n: 2; }
+.g4 { --n: 4; }
+.g7 { --n: 7; }
+.g8 { --n: 8; }
+.span-2 { grid-column-end: span 2; }
+.start-4 { grid-column-start: 4; }
+
+/* visually hidden, still read by screen readers and search engines (page headings on pages designed without one) */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- spacing from the Dorik site (generated by eva.py; see measure.py) ---------- */
+.brightness-120pct { --brightness: 120%; }
+.brightness-105pct { --brightness: 105%; }
+.c-0b0308 { color: #0b0308; }
+.fs-36 { font-size: 36px; }
+.fs-31 { font-size: 31px; }
+.fs-18 { font-size: 18px; }
+.gap-140 { column-gap: 140px; }
+.gap-30 { column-gap: 30px; }
+.gap-20 { column-gap: 20px; }
+.gap-10 { column-gap: 10px; }
+.h-500 { height: 500px; }
+.h-300 { height: 300px; }
+.lh-1 { line-height: 1; }
+.lh-1_1 { line-height: 1.1; }
+.ls-n0_2 { letter-spacing: -0.2px; }
+.ls-n0_5 { letter-spacing: -0.5px; }
+.mb-50 { margin-bottom: 50px; }
+.mb-20 { margin-bottom: 20px; }
+.ml-50 { margin-left: 50px; }
+.mr-50 { margin-right: 50px; }
+.mr-10 { margin-right: 10px; }
+.mt-41 { margin-top: 41px; }
+.mt-24 { margin-top: 24px; }
+.mt-20 { margin-top: 20px; }
+.mt-14 { margin-top: 14px; }
+.mt-5 { margin-top: 5px; }
+.mt-4 { margin-top: 4px; }
+.mt-n5 { margin-top: -5px; }
+.mt-n30 { margin-top: -30px; }
+.mt-n50 { margin-top: -50px; }
+.pb-50 { padding-bottom: 50px; }
+.pb-42 { padding-bottom: 42px; }
+.pb-30 { padding-bottom: 30px; }
+.pb-24 { padding-bottom: 24px; }
+.pb-20 { padding-bottom: 20px; }
+.pb-14 { padding-bottom: 14px; }
+.pb-5 { padding-bottom: 5px; }
+.pl-150 { padding-left: 150px; }
+.pl-50 { padding-left: 50px; }
+.pr-50 { padding-right: 50px; }
+.pt-50 { padding-top: 50px; }
+.pt-40 { padding-top: 40px; }
+.pt-20 { padding-top: 20px; }
+.r-3_5 { border-radius: 3.5px; }
+.saturate-120pct { --saturate: 120%; }
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+.w-379 { width: 379px; }
+.w-300 { width: 300px; }
+@media (max-width: 1023px) {
+  .md-ml-50 { margin-left: 50px; }
+  .md-text-left { text-align: left; }
+  .md-w-770 { width: 770px; }
+  .md-w-756 { width: 756px; }
+  .md-w-750 { width: 750px; }
+  .md-w-605 { width: 605px; }
+  .md-w-588 { width: 588px; }
+  .md-w-529 { width: 529px; }
+  .md-w-500 { width: 500px; }
+  .md-w-436 { width: 436px; }
+}
+@media (max-width: 767px) {
+  .sm-fs-12 { font-size: 12px; }
+  .sm-h-auto { height: auto; }
+  .sm-ml-25 { margin-left: 25px; }
+  .sm-ml-22 { margin-left: 22px; }
+  .sm-ml-0 { margin-left: 0; }
+  .sm-mr-25 { margin-right: 25px; }
+  .sm-mt-40 { margin-top: 40px; }
+  .sm-mt-20 { margin-top: 20px; }
+  .sm-mt-15 { margin-top: 15px; }
+  .sm-mt-n6 { margin-top: -6px; }
+  .sm-pb-20 { padding-bottom: 20px; }
+  .sm-pb-15 { padding-bottom: 15px; }
+  .sm-pl-25 { padding-left: 25px; }
+  .sm-pr-25 { padding-right: 25px; }
+  .sm-pt-20 { padding-top: 20px; }
+  .sm-text-center { text-align: center; }
+  .sm-w-340 { width: 340px; }
+  .sm-w-auto { width: auto; }
+}
