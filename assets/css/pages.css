@@ -140,6 +140,11 @@ h2 {
   text-align: right;
 }
 
+/* bullet lists (not the "Great news" links): a little air between items */
+ul:not(.link-list) li + li {
+  margin-top: 0.2lh;
+}
+
 /* "Great news" links: the emoji sits in a gutter to the left, so every line of text and its underline start at
    the same edge; a blank line between links */
 .link-list {
