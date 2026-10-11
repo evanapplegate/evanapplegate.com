@@ -106,7 +106,7 @@ h2 {
 
 /* pictures, videos, the Vimeo player */
 .grid :is(img, video, iframe) {
-  border-radius: 5px;
+  border-radius: 2px; /* every corner is 2px, as on physical.evanapplegate.com */
 }
 :where(.grid) :is(img, video) {
   width: 100%; /* the generated w-* classes override this */
@@ -198,7 +198,7 @@ ul:not(.link-list) li + li {
   margin: 0 0 10px;
   padding: 10px 15px;
   border: 1px solid #d0cbc1;
-  border-radius: 5px;
+  border-radius: 2px;
   background: #f9f9f8;
   color: #171a21;
   font: 14px/1.15 var(--font);
@@ -212,7 +212,7 @@ ul:not(.link-list) li + li {
   height: 50px;
   padding: 0 30px;
   border: 0;
-  border-radius: 5px;
+  border-radius: 2px;
   background: #b6ac98;
   color: #fff;
   font: 18px var(--font);
@@ -224,7 +224,7 @@ ul:not(.link-list) li + li {
 .error-message {
   margin-top: 10px;
   padding: 10px 15px;
-  border-radius: 3px;
+  border-radius: 2px;
   background: #fff;
   font-size: 14px;
   text-align: center;
@@ -313,7 +313,6 @@ ul:not(.link-list) li + li {
 .pt-50 { padding-top: 50px; }
 .pt-40 { padding-top: 40px; }
 .pt-20 { padding-top: 20px; }
-.r-3_5 { border-radius: 3.5px; }
 .saturate-120pct { --saturate: 120%; }
 .text-center { text-align: center; }
 .text-left { text-align: left; }

@@ -85,7 +85,7 @@ body::before {
   min-height: 50px;
   padding: 10px 15px;
   border: 1px solid #d0cbc1;
-  border-radius: 5px;
+  border-radius: 2px;
   background-color: #f9f9f8;
   font-size: 14px;
 }
