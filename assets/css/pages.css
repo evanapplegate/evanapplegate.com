@@ -350,5 +350,4 @@ ul:not(.link-list) li + li {
   .sm-pt-20 { padding-top: 20px; }
   .sm-text-center { text-align: center; }
   .sm-w-340 { width: 340px; }
-  .sm-w-auto { width: auto; }
 }
