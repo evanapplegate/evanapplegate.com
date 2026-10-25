@@ -25,7 +25,7 @@
   <meta name="author" content="Evan Applegate">
   <link rel="alternate" type="text/markdown" title="llms.txt" href="/llms.txt">
   <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Person","@id":"https://evanapplegate.com/#person","name":"Evan Applegate","jobTitle":"Cartographer","url":"https://evanapplegate.com/","description":"Evan Applegate is an award-winning cartographer and information designer. His maps appear in National Geographic and Manhattan offices; he makes LED-backlit map art (Radiant Maps), maps for organizations (The Map Consultancy), map blankets and prints (Quercus Maps), and a podcast interviewing cartographers (Very Expensive Maps).","sameAs":["https://www.linkedin.com/in/evan-applegate/","https://github.com/evanapplegate","https://radiantmaps.co/","https://themapconsultancy.com/","https://veryexpensivemaps.com/"]},{"@type":"WebSite","@id":"https://evanapplegate.com/#website","url":"https://evanapplegate.com/","name":"Evan Applegate","description":"Evan Applegate is an award-winning cartographer and information designer. His maps appear in National Geographic and Manhattan offices; he makes LED-backlit map art (Radiant Maps), maps for organizations (The Map Consultancy), map blankets and prints (Quercus Maps), and a podcast interviewing cartographers (Very Expensive Maps).","publisher":{"@id":"https://evanapplegate.com/#person"}},{"@type":"ProfilePage","@id":"https://evanapplegate.com/#page","url":"https://evanapplegate.com/","name":"Evan Applegate | Cartographer","description":"Evan Applegate is an award-winning cartographer and information designer: maps for National Geographic and Manhattan offices, backlit map art, map blankets and a podcast interviewing cartographers.","isPartOf":{"@id":"https://evanapplegate.com/#website"},"inLanguage":"en","mainEntity":{"@id":"https://evanapplegate.com/#person"}}]}</script>
-  <script src="/assets/formspree.js" defer></script>
+  <script src="/assets/form.js" defer></script>
   <script src="/assets/js/site.js" defer></script>
   <script src="/assets/js/audio-player.js" defer></script>
 </head>
@@ -163,7 +163,7 @@
         <li>ACHs at start and end, you get a dir of clean files and physical products shipped to you, Evan made this so easy.........</li>
         </ol>
       </div>
-      <form id="contact-form" class="contact mt-14 sm-mt-20" action="https://formspree.io/f/xljdqvqd" method="POST">
+      <form id="contact-form" class="contact mt-14 sm-mt-20" action="https://radiantmaps.co/api/contact" method="POST">
         <input type="hidden" name="_subject" value="evanapplegate.com comment">
         <input class="form-control" type="email" name="email" required placeholder="Your email" aria-label="Your email" autocomplete="email" data-fs-field>
         <span data-fs-error="email"></span>
@@ -189,16 +189,6 @@
   </div>
 </section>
 </main>
-<script>
-  window.formspree = window.formspree || function () { (formspree.q = formspree.q || []).push(arguments); };
-  formspree('initForm', { formElement: '#contact-form', formId: 'xljdqvqd', useDefaultStyles: false });
-  if (!window.fsBlocked) {  // addresses at these domains (or their subdomains) are refused before sending
-    window.fsBlocked = /@(?:[^@]*\.)?(?:hotmail\.com|mail\.ru)$/i;
-    document.addEventListener('input', function (e) {
-      var i = e.target;
-      if (i.type === 'email') i.setCustomValidity(fsBlocked.test(i.value.trim()) ? 'Please use a different email address.' : '');
-    });
-  }
-</script>
+
 </body>
 </html>

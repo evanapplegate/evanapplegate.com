@@ -25,7 +25,7 @@
   <meta name="author" content="Evan Applegate">
   <link rel="alternate" type="text/markdown" title="llms.txt" href="/llms.txt">
   <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Person","@id":"https://evanapplegate.com/#person","name":"Evan Applegate","jobTitle":"Cartographer","url":"https://evanapplegate.com/","description":"Evan Applegate is an award-winning cartographer and information designer. His maps appear in National Geographic and Manhattan offices; he makes LED-backlit map art (Radiant Maps), maps for organizations (The Map Consultancy), map blankets and prints (Quercus Maps), and a podcast interviewing cartographers (Very Expensive Maps).","sameAs":["https://www.linkedin.com/in/evan-applegate/","https://github.com/evanapplegate","https://radiantmaps.co/","https://themapconsultancy.com/","https://veryexpensivemaps.com/"]},{"@type":"WebSite","@id":"https://evanapplegate.com/#website","url":"https://evanapplegate.com/","name":"Evan Applegate","description":"Evan Applegate is an award-winning cartographer and information designer. His maps appear in National Geographic and Manhattan offices; he makes LED-backlit map art (Radiant Maps), maps for organizations (The Map Consultancy), map blankets and prints (Quercus Maps), and a podcast interviewing cartographers (Very Expensive Maps).","publisher":{"@id":"https://evanapplegate.com/#person"}},{"@type":"WebPage","@id":"https://evanapplegate.com/map-design-files/#page","url":"https://evanapplegate.com/map-design-files/","name":"Map design files | Evan Applegate","description":"Source files for select maps by cartographer Evan Applegate, mostly public domain.","isPartOf":{"@id":"https://evanapplegate.com/#website"},"inLanguage":"en"}]}</script>
-  <script src="/assets/formspree.js" defer></script>
+  <script src="/assets/form.js" defer></script>
   <script src="/assets/js/site.js" defer></script>
 </head>
 <body>
@@ -54,7 +54,7 @@
   <div class="grid g1 gap-30 contained">
     <div class="pb-20">
       <h2 class="mt-41 fs-31 c-0b0308">Questions?</h2>
-      <form id="contact-form" class="contact mt-20" action="https://formspree.io/f/xljdqvqd" method="POST">
+      <form id="contact-form" class="contact mt-20" action="https://radiantmaps.co/api/contact" method="POST">
         <input type="hidden" name="_subject" value="Files Q">
         <input class="form-control" type="email" name="email" required placeholder="Your email" aria-label="Your email" autocomplete="email" data-fs-field>
         <span data-fs-error="email"></span>
@@ -69,16 +69,6 @@
   </div>
 </section>
 </main>
-<script>
-  window.formspree = window.formspree || function () { (formspree.q = formspree.q || []).push(arguments); };
-  formspree('initForm', { formElement: '#contact-form', formId: 'xljdqvqd', useDefaultStyles: false });
-  if (!window.fsBlocked) {  // addresses at these domains (or their subdomains) are refused before sending
-    window.fsBlocked = /@(?:[^@]*\.)?(?:hotmail\.com|mail\.ru)$/i;
-    document.addEventListener('input', function (e) {
-      var i = e.target;
-      if (i.type === 'email') i.setCustomValidity(fsBlocked.test(i.value.trim()) ? 'Please use a different email address.' : '');
-    });
-  }
-</script>
+
 </body>
 </html>
