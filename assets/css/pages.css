@@ -354,3 +354,19 @@ ul:not(.link-list) li + li {
   .sm-w-100pct { width: 100%; }
   .sm-w-88_24pct { width: 88.24%; }
 }
+
+/* ---------- "Also made" thumbnails ---------- */
+/* home: "Great news" keeps its seventh of the row, the four picture columns share the rest */
+.g-home { grid-template-columns: minmax(0, calc((100% - 30px) / 7)) repeat(4, minmax(0, 1fr)); }
+/* work and physical thumbnails: masonry as on work.evanapplegate.com (6px between the two stacks, 5px down them,
+   darken on hover); thumbs.py puts each picture in the shorter stack */
+.thumbs { display: flex; gap: 6px; align-items: flex-start; }
+.thumbs > div { flex: 1; min-width: 0; }
+.thumbs a { display: block; position: relative; cursor: zoom-in; }
+.thumbs a + a { margin-top: 5px; }
+.thumbs img { transition: filter 0.2s; }
+.thumbs a:hover img { filter: brightness(0.8); }
+.thumbs .vid::after {
+  content: '▶'; position: absolute; right: 4px; bottom: 3px; font-size: 10px; line-height: 1; color: #fff;
+  text-shadow: 0 0 3px rgba(0, 0, 0, 0.7); pointer-events: none;
+}

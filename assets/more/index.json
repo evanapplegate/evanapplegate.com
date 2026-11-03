@@ -1,0 +1,132 @@
+[
+ {
+  "slug": "crysta-resin-landscape4",
+  "full": "/assets/more/full/crysta-resin-landscape4.jpg",
+  "source": "https://physical.evanapplegate.com/pics/crysta_resin_landscape4.jpg",
+  "alt": "Crysta resin landscape 4",
+  "kind": "pic",
+  "clothing": false,
+  "w": 200,
+  "h": 267
+ },
+ {
+  "slug": "grand-canyon-territory",
+  "full": "/assets/more/full/grand-canyon-territory.jpg",
+  "source": "https://goods.evanapplegate.com/products/grand-canyon-territory/img/00.jpg",
+  "alt": "Grand Canyon resin territory",
+  "kind": "pic",
+  "clothing": false,
+  "w": 200,
+  "h": 150
+ },
+ {
+  "slug": "bryce-canyon-territory",
+  "full": "/assets/more/full/bryce-canyon-territory.jpg",
+  "source": "https://goods.evanapplegate.com/products/bryce-canyon-territory/img/01.jpg",
+  "alt": "Bryce Canyon resin territory",
+  "kind": "pic",
+  "clothing": false,
+  "w": 200,
+  "h": 143
+ },
+ {
+  "slug": "mt-cleveland-territory",
+  "full": "/assets/more/full/mt-cleveland-territory.jpg",
+  "source": "https://goods.evanapplegate.com/products/mt-cleveland-territory/img/00.jpg",
+  "alt": "Mt. Cleveland resin territory",
+  "kind": "pic",
+  "clothing": false,
+  "w": 200,
+  "h": 152
+ },
+ {
+  "slug": "lux-capital-orienteering-map-tech",
+  "full": "/assets/more/full/lux-capital-orienteering-map-tech.jpeg",
+  "source": "https://work.evanapplegate.com/physical_pics/lux_capital_orienteering_map_tech.jpeg",
+  "alt": "lux capital orienteering map tech",
+  "kind": "pic",
+  "clothing": false,
+  "w": 200,
+  "h": 150
+ },
+ {
+  "slug": "kunin-map-tech",
+  "full": "/assets/more/full/kunin-map-tech.mp4",
+  "source": "https://work.evanapplegate.com/digital_vids/kunin_map_tech.mp4",
+  "alt": "kunin map tech",
+  "kind": "vid",
+  "clothing": false,
+  "w": 200,
+  "h": 96
+ },
+ {
+  "slug": "walnut-table-nyc-map-1",
+  "full": "/assets/more/full/walnut-table-nyc-map-1.mp4",
+  "source": "https://work.evanapplegate.com/physical_vids/walnut_table_nyc_map%20%281%29.mp4",
+  "alt": "walnut table nyc map",
+  "kind": "vid",
+  "clothing": false,
+  "w": 200,
+  "h": 355
+ },
+ {
+  "slug": "disc2",
+  "full": "/assets/more/full/disc2.mp4",
+  "source": "file:///Users/evanapplegate/Dropbox/freelance/replace_dorik/evanapplegate/disc2.mp4",
+  "alt": "Durin website: automated drilling to accelerate mineral discovery",
+  "kind": "vid",
+  "clothing": false,
+  "w": 200,
+  "h": 119
+ },
+ {
+  "slug": "black2-tech",
+  "full": "/assets/more/full/black2-tech.jpg",
+  "source": "https://work.evanapplegate.com/physical_pics/black2_tech.jpg",
+  "alt": "Black 2",
+  "kind": "pic",
+  "clothing": true,
+  "w": 200,
+  "h": 200
+ },
+ {
+  "slug": "durin-hoodie-1-tech",
+  "full": "/assets/more/full/durin-hoodie-1-tech.jpg",
+  "source": "https://work.evanapplegate.com/physical_pics/durin_hoodie_1_tech.jpg",
+  "alt": "Durin hoodie 1",
+  "kind": "pic",
+  "clothing": true,
+  "w": 200,
+  "h": 183
+ },
+ {
+  "slug": "shirt6-tech",
+  "full": "/assets/more/full/shirt6-tech.jpeg",
+  "source": "https://work.evanapplegate.com/physical_pics/shirt6_tech.jpeg",
+  "alt": "Map shirt 6",
+  "kind": "pic",
+  "clothing": true,
+  "w": 200,
+  "h": 200
+ },
+ {
+  "slug": "vash2-tech",
+  "full": "/assets/more/full/vash2-tech.jpg",
+  "source": "https://work.evanapplegate.com/physical_pics/vash2_tech.jpg",
+  "alt": "Vashon 2",
+  "kind": "pic",
+  "clothing": true,
+  "w": 200,
+  "h": 200
+ },
+ {
+  "slug": "white1-tech",
+  "full": "/assets/more/full/white1-tech.jpg",
+  "source": "https://work.evanapplegate.com/physical_pics/white1_tech.jpg",
+  "alt": "White 1",
+  "kind": "pic",
+  "clothing": true,
+  "w": 200,
+  "h": 200
+ }
+]
