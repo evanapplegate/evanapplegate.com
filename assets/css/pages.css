@@ -233,19 +233,6 @@ ul:not(.link-list) li + li {
   color: #ff3a28;
 }
 
-/* ---------- gift guide rows fade up as they scroll in (site.js; desktop only) ---------- */
-.reveal-ready [data-reveal] {
-  opacity: 0;
-  transition: opacity 0.4s ease, transform 0.4s ease;
-}
-.reveal-ready [data-reveal='fade-up'] {
-  transform: translateY(100px);
-}
-.reveal-ready [data-reveal].revealed {
-  opacity: 1;
-  transform: none;
-}
-
 /* grid columns in use (generated) */
 .g1 { --n: 1; }
 .g2 { --n: 2; }
