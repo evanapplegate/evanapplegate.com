@@ -240,7 +240,7 @@ ul:not(.link-list) li + li {
 .g7 { --n: 7; }
 .g8 { --n: 8; }
 .span-2 { grid-column-end: span 2; }
-.start-4 { grid-column-start: 4; }
+.start-3 { grid-column-start: 3; }
 
 /* visually hidden, still read by screen readers and search engines (page headings on pages designed without one) */
 .sr-only {
